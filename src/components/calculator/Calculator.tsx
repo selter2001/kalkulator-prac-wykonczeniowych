@@ -217,8 +217,9 @@ export const Calculator = () => {
         )}
 
         {/* Footer */}
-        <footer className="mt-16 text-center text-slate-500 text-sm">
+        <footer className="mt-16 text-center text-slate-500 text-sm space-y-1">
           <p>Kalkulator prac wykończeniowych © 2025</p>
+          <p className="text-slate-600 font-medium">by Wojciech Olszak</p>
         </footer>
       </div>
     </div>
