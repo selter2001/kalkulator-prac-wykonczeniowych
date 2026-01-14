@@ -3,10 +3,13 @@ import { Plus, Calculator as CalcIcon, Home } from 'lucide-react';
 import { useCalculator } from '@/hooks/useCalculator';
 import { Button } from '@/components/ui/button';
 import { RoomCard } from './RoomCard';
+import { VatRate } from '@/types/calculator';
 
 export const Calculator = () => {
   const {
     rooms,
+    vatRate,
+    setVatRate,
     createRoom,
     updateRoomName,
     deleteRoom,
@@ -25,10 +28,12 @@ export const Calculator = () => {
     toggleWorkType,
     calculateRoomTotal,
     calculateGrandTotal,
+    calculateGrossTotal,
     getWorkTypeQuantity,
   } = useCalculator();
 
   const grandTotal = calculateGrandTotal();
+  const grossTotal = calculateGrossTotal();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-foreground">
@@ -134,24 +139,61 @@ export const Calculator = () => {
             animate={{ opacity: 1, y: 0 }}
             className="mt-10 p-6 rounded-2xl bg-gradient-to-r from-green-500/20 to-emerald-500/20 backdrop-blur-md border border-green-500/30 shadow-2xl"
           >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-400 uppercase tracking-wide">Suma całkowita (netto)</p>
-                <p className="text-sm text-slate-500">
-                  {rooms.length} {rooms.length === 1 ? 'pokój' : rooms.length < 5 ? 'pokoje' : 'pokoi'}
-                </p>
+            <div className="flex flex-col gap-6">
+              {/* VAT Selection */}
+              <div className="flex items-center gap-4">
+                <span className="text-sm text-slate-400">Stawka VAT:</span>
+                <div className="flex gap-2">
+                  <Button
+                    variant={vatRate === 8 ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setVatRate(8)}
+                    className={vatRate === 8 ? "bg-primary" : "bg-slate-800/50 border-slate-600 hover:bg-slate-700"}
+                  >
+                    8%
+                  </Button>
+                  <Button
+                    variant={vatRate === 23 ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setVatRate(23)}
+                    className={vatRate === 23 ? "bg-primary" : "bg-slate-800/50 border-slate-600 hover:bg-slate-700"}
+                  >
+                    23%
+                  </Button>
+                </div>
               </div>
-              <motion.div
-                key={grandTotal}
-                initial={{ scale: 1.1 }}
-                animate={{ scale: 1 }}
-                className="text-right"
-              >
-                <p className="text-4xl font-bold text-green-400">
-                  {grandTotal.toFixed(2)} zł
-                </p>
-                <p className="text-xs text-slate-500">netto</p>
-              </motion.div>
+
+              {/* Totals */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-slate-400 uppercase tracking-wide">Suma całkowita</p>
+                  <p className="text-sm text-slate-500">
+                    {rooms.length} {rooms.length === 1 ? 'pokój' : rooms.length < 5 ? 'pokoje' : 'pokoi'}
+                  </p>
+                </div>
+                <div className="text-right space-y-2">
+                  <motion.div
+                    key={grandTotal}
+                    initial={{ scale: 1.1 }}
+                    animate={{ scale: 1 }}
+                  >
+                    <p className="text-2xl font-bold text-slate-300">
+                      {grandTotal.toFixed(2)} zł
+                    </p>
+                    <p className="text-xs text-slate-500">netto</p>
+                  </motion.div>
+                  <motion.div
+                    key={grossTotal}
+                    initial={{ scale: 1.1 }}
+                    animate={{ scale: 1 }}
+                  >
+                    <p className="text-4xl font-bold text-green-400">
+                      {grossTotal.toFixed(2)} zł
+                    </p>
+                    <p className="text-xs text-slate-500">brutto (VAT {vatRate}%)</p>
+                  </motion.div>
+                </div>
+              </div>
             </div>
           </motion.div>
         )}

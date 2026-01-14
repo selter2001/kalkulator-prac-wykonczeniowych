@@ -36,7 +36,7 @@ export interface Room {
   corners: LinearItem[];
   grooves: LinearItem[];
   acrylic: LinearItem[];
-  floorProtection: number; // m² dla oklejania posadzki
+  floorProtection: number;
   totalWallArea: number;
   totalWindowArea: number;
   totalCorners: number;
@@ -44,6 +44,8 @@ export interface Room {
   totalAcrylic: number;
   netArea: number;
 }
+
+export type VatRate = 8 | 23;
 
 export const defaultWorkTypes: Omit<WorkType, 'id'>[] = [
   { name: 'Malowanie 1x', pricePerMeter: 8, enabled: true, unit: 'm2' },
