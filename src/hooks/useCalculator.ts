@@ -1,10 +1,11 @@
 import { useState, useCallback } from 'react';
-import { Room, Wall, Window, WorkType, LinearItem, defaultWorkTypes } from '@/types/calculator';
+import { Room, Wall, Window, WorkType, LinearItem, defaultWorkTypes, VatRate } from '@/types/calculator';
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
 
 export const useCalculator = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
+  const [vatRate, setVatRate] = useState<VatRate>(23);
 
   const createRoom = useCallback((name: string = 'Nowy pokój') => {
     const newRoom: Room = {
@@ -195,8 +196,15 @@ export const useCalculator = () => {
     return rooms.reduce((sum, room) => sum + calculateRoomTotal(room), 0);
   }, [rooms, calculateRoomTotal]);
 
+  const calculateGrossTotal = useCallback(() => {
+    const netTotal = calculateGrandTotal();
+    return netTotal * (1 + vatRate / 100);
+  }, [calculateGrandTotal, vatRate]);
+
   return {
     rooms,
+    vatRate,
+    setVatRate,
     createRoom,
     updateRoomName,
     deleteRoom,
@@ -215,6 +223,7 @@ export const useCalculator = () => {
     toggleWorkType,
     calculateRoomTotal,
     calculateGrandTotal,
+    calculateGrossTotal,
     getWorkTypeQuantity,
   };
 };
