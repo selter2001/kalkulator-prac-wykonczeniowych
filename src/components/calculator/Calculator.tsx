@@ -288,7 +288,7 @@ export const Calculator = () => {
           className="mt-20 text-center"
         >
           <p className="text-sm text-muted-foreground">
-            Kalkulator prac wykończeniowych © 2025
+            Kalkulator prac wykończeniowych © 2026
           </p>
           <p className="text-sm font-medium text-foreground/70 mt-1">
             by Wojciech Olszak
