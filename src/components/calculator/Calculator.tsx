@@ -1,9 +1,10 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Calculator as CalcIcon, Home } from 'lucide-react';
+import { Plus, Calculator as CalcIcon, Home, FileDown } from 'lucide-react';
 import { useCalculator } from '@/hooks/useCalculator';
 import { Button } from '@/components/ui/button';
 import { RoomCard } from './RoomCard';
 import { VatRate } from '@/types/calculator';
+import { exportToPdf } from '@/utils/pdfExport';
 
 export const Calculator = () => {
   const {
@@ -194,6 +195,23 @@ export const Calculator = () => {
                   </motion.div>
                 </div>
               </div>
+
+              {/* Export Button */}
+              <Button
+                onClick={() => exportToPdf({
+                  rooms,
+                  vatRate,
+                  calculateRoomTotal,
+                  getWorkTypeQuantity,
+                  grandTotal,
+                  grossTotal,
+                })}
+                size="lg"
+                className="w-full gap-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 shadow-lg"
+              >
+                <FileDown className="h-5 w-5" />
+                Pobierz wycenę jako PDF
+              </Button>
             </div>
           </motion.div>
         )}
