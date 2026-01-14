@@ -6,16 +6,19 @@ import { Label } from '@/components/ui/label';
 
 interface WorkTypesListProps {
   workTypes: WorkType[];
-  netArea: number;
+  getQuantity: (workType: WorkType) => number;
   onToggle: (id: string) => void;
   onPriceChange: (id: string, price: number) => void;
 }
 
-export const WorkTypesList = ({ workTypes, netArea, onToggle, onPriceChange }: WorkTypesListProps) => {
+export const WorkTypesList = ({ workTypes, getQuantity, onToggle, onPriceChange }: WorkTypesListProps) => {
   return (
     <div className="space-y-3">
       {workTypes.map((workType, index) => {
-        const total = workType.enabled ? netArea * workType.pricePerMeter : 0;
+        const quantity = getQuantity(workType);
+        const total = workType.enabled ? quantity * workType.pricePerMeter : 0;
+        const unitLabel = workType.unit === 'm2' ? 'zł/m²' : 'zł/mb';
+        const quantityLabel = workType.unit === 'm2' ? 'm²' : 'mb';
         
         return (
           <motion.div
@@ -35,17 +38,24 @@ export const WorkTypesList = ({ workTypes, netArea, onToggle, onPriceChange }: W
                   checked={workType.enabled}
                   onCheckedChange={() => onToggle(workType.id)}
                 />
-                <Label className={`font-medium transition-colors ${
-                  workType.enabled ? 'text-foreground' : 'text-muted-foreground'
-                }`}>
-                  {workType.name}
-                </Label>
+                <div className="flex flex-col">
+                  <Label className={`font-medium transition-colors ${
+                    workType.enabled ? 'text-foreground' : 'text-muted-foreground'
+                  }`}>
+                    {workType.name}
+                  </Label>
+                  {workType.enabled && quantity > 0 && (
+                    <span className="text-xs text-muted-foreground">
+                      {quantity.toFixed(2)} {quantityLabel}
+                    </span>
+                  )}
+                </div>
               </div>
               
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2">
                   <Label className="text-xs text-muted-foreground whitespace-nowrap">
-                    zł/m²
+                    {unitLabel}
                   </Label>
                   <Input
                     type="number"

@@ -9,15 +9,21 @@ import {
   X,
   Square,
   LayoutGrid,
-  Paintbrush
+  Paintbrush,
+  CornerDownRight,
+  Ruler,
+  Droplets,
+  Shield
 } from 'lucide-react';
-import { Room } from '@/types/calculator';
+import { Room, WorkType } from '@/types/calculator';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { WallInput } from './WallInput';
 import { ItemList } from './ItemList';
 import { WorkTypesList } from './WorkTypesList';
+import { LinearInput } from './LinearInput';
+import { LinearItemList } from './LinearItemList';
 
 interface RoomCardProps {
   room: Room;
@@ -28,8 +34,16 @@ interface RoomCardProps {
   onDeleteWall: (wallId: string) => void;
   onAddWindow: (width: number, height: number) => void;
   onDeleteWindow: (windowId: string) => void;
+  onAddCorner: (length: number) => void;
+  onDeleteCorner: (cornerId: string) => void;
+  onAddGroove: (length: number) => void;
+  onDeleteGroove: (grooveId: string) => void;
+  onAddAcrylic: (length: number) => void;
+  onDeleteAcrylic: (acrylicId: string) => void;
+  onSetFloorProtection: (area: number) => void;
   onToggleWorkType: (workTypeId: string) => void;
   onUpdateWorkTypePrice: (workTypeId: string, price: number) => void;
+  getWorkTypeQuantity: (workType: WorkType) => number;
 }
 
 export const RoomCard = ({
@@ -41,8 +55,16 @@ export const RoomCard = ({
   onDeleteWall,
   onAddWindow,
   onDeleteWindow,
+  onAddCorner,
+  onDeleteCorner,
+  onAddGroove,
+  onDeleteGroove,
+  onAddAcrylic,
+  onDeleteAcrylic,
+  onSetFloorProtection,
   onToggleWorkType,
   onUpdateWorkTypePrice,
+  getWorkTypeQuantity,
 }: RoomCardProps) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
@@ -188,6 +210,95 @@ export const RoomCard = ({
               />
             </div>
 
+            {/* Corners Section (metry bieżące) */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <CornerDownRight className="h-5 w-5 text-purple-500" />
+                <h4 className="font-semibold">Narożniki (mb)</h4>
+                <span className="text-sm text-muted-foreground ml-auto">
+                  Razem: {room.totalCorners.toFixed(2)} mb
+                </span>
+              </div>
+              <LinearInput
+                onAdd={onAddCorner}
+                label="Dodaj narożnik"
+                icon={<CornerDownRight className="h-4 w-4 text-purple-500" />}
+              />
+              <LinearItemList
+                items={room.corners}
+                onDelete={onDeleteCorner}
+                label="Narożnik"
+                emptyMessage="Brak narożników"
+              />
+            </div>
+
+            {/* Grooves Section (zarzucanie bruzd) */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Ruler className="h-5 w-5 text-amber-500" />
+                <h4 className="font-semibold">Zarzucanie bruzd (mb)</h4>
+                <span className="text-sm text-muted-foreground ml-auto">
+                  Razem: {room.totalGrooves.toFixed(2)} mb
+                </span>
+              </div>
+              <LinearInput
+                onAdd={onAddGroove}
+                label="Dodaj bruzdę"
+                icon={<Ruler className="h-4 w-4 text-amber-500" />}
+              />
+              <LinearItemList
+                items={room.grooves}
+                onDelete={onDeleteGroove}
+                label="Bruzda"
+                emptyMessage="Brak bruzd"
+              />
+            </div>
+
+            {/* Acrylic Section */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Droplets className="h-5 w-5 text-cyan-500" />
+                <h4 className="font-semibold">Akrylowanie (mb)</h4>
+                <span className="text-sm text-muted-foreground ml-auto">
+                  Razem: {room.totalAcrylic.toFixed(2)} mb
+                </span>
+              </div>
+              <LinearInput
+                onAdd={onAddAcrylic}
+                label="Dodaj akryl"
+                icon={<Droplets className="h-4 w-4 text-cyan-500" />}
+              />
+              <LinearItemList
+                items={room.acrylic}
+                onDelete={onDeleteAcrylic}
+                label="Akryl"
+                emptyMessage="Brak akrylowania"
+              />
+            </div>
+
+            {/* Floor Protection Section */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Shield className="h-5 w-5 text-green-500" />
+                <h4 className="font-semibold">Oklejanie posadzki (m²)</h4>
+                <span className="text-sm text-muted-foreground ml-auto">
+                  {room.floorProtection.toFixed(2)} m²
+                </span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={room.floorProtection || ''}
+                  onChange={(e) => onSetFloorProtection(parseFloat(e.target.value) || 0)}
+                  placeholder="Powierzchnia posadzki"
+                  className="max-w-xs bg-background/50"
+                />
+                <span className="text-sm text-muted-foreground">m²</span>
+              </div>
+            </div>
+
             {/* Work Types Section */}
             <div className="space-y-4">
               <div className="flex items-center gap-2">
@@ -196,7 +307,7 @@ export const RoomCard = ({
               </div>
               <WorkTypesList
                 workTypes={room.workTypes}
-                netArea={room.netArea}
+                getQuantity={getWorkTypeQuantity}
                 onToggle={onToggleWorkType}
                 onPriceChange={onUpdateWorkTypePrice}
               />
