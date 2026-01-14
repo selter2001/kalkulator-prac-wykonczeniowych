@@ -14,10 +14,18 @@ export const Calculator = () => {
     deleteWall,
     addWindow,
     deleteWindow,
+    addCorner,
+    deleteCorner,
+    addGroove,
+    deleteGroove,
+    addAcrylic,
+    deleteAcrylic,
+    setFloorProtection,
     updateWorkTypePrice,
     toggleWorkType,
     calculateRoomTotal,
     calculateGrandTotal,
+    getWorkTypeQuantity,
   } = useCalculator();
 
   const grandTotal = calculateGrandTotal();
@@ -48,6 +56,9 @@ export const Calculator = () => {
           </div>
           <p className="text-slate-400 max-w-xl mx-auto">
             Szybko i łatwo wyceniaj prace wykończeniowe. Dodawaj pokoje, ściany, okna i obliczaj koszty.
+          </p>
+          <p className="text-amber-400/80 text-sm mt-2 font-medium">
+            Wszystkie ceny są kwotami netto
           </p>
         </motion.header>
 
@@ -83,8 +94,16 @@ export const Calculator = () => {
                 onDeleteWall={(wallId) => deleteWall(room.id, wallId)}
                 onAddWindow={(w, h) => addWindow(room.id, w, h)}
                 onDeleteWindow={(windowId) => deleteWindow(room.id, windowId)}
+                onAddCorner={(length) => addCorner(room.id, length)}
+                onDeleteCorner={(cornerId) => deleteCorner(room.id, cornerId)}
+                onAddGroove={(length) => addGroove(room.id, length)}
+                onDeleteGroove={(grooveId) => deleteGroove(room.id, grooveId)}
+                onAddAcrylic={(length) => addAcrylic(room.id, length)}
+                onDeleteAcrylic={(acrylicId) => deleteAcrylic(room.id, acrylicId)}
+                onSetFloorProtection={(area) => setFloorProtection(room.id, area)}
                 onToggleWorkType={(workTypeId) => toggleWorkType(room.id, workTypeId)}
                 onUpdateWorkTypePrice={(workTypeId, price) => updateWorkTypePrice(room.id, workTypeId, price)}
+                getWorkTypeQuantity={(workType) => getWorkTypeQuantity(room, workType)}
               />
             ))}
           </AnimatePresence>
@@ -117,7 +136,7 @@ export const Calculator = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-400 uppercase tracking-wide">Suma całkowita</p>
+                <p className="text-sm text-slate-400 uppercase tracking-wide">Suma całkowita (netto)</p>
                 <p className="text-sm text-slate-500">
                   {rooms.length} {rooms.length === 1 ? 'pokój' : rooms.length < 5 ? 'pokoje' : 'pokoi'}
                 </p>
@@ -131,6 +150,7 @@ export const Calculator = () => {
                 <p className="text-4xl font-bold text-green-400">
                   {grandTotal.toFixed(2)} zł
                 </p>
+                <p className="text-xs text-slate-500">netto</p>
               </motion.div>
             </div>
           </motion.div>
