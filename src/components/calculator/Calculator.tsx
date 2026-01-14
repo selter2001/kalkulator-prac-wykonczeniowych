@@ -1,10 +1,33 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Calculator as CalcIcon, Home, FileDown } from 'lucide-react';
+import { Plus, FileDown, Sparkles } from 'lucide-react';
 import { useCalculator } from '@/hooks/useCalculator';
 import { Button } from '@/components/ui/button';
 import { RoomCard } from './RoomCard';
-import { VatRate } from '@/types/calculator';
 import { exportToPdf } from '@/utils/pdfExport';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: 'spring' as const,
+      stiffness: 100,
+      damping: 15,
+    },
+  },
+};
 
 export const Calculator = () => {
   const {
@@ -37,191 +60,241 @@ export const Calculator = () => {
   const grossTotal = calculateGrossTotal();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-foreground">
-      {/* Animated background */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute top-1/2 -left-40 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-        <div className="absolute -bottom-40 right-1/3 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+    <div className="min-h-screen bg-background">
+      {/* Subtle gradient background */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-accent/10 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2" />
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 py-8 max-w-5xl">
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="relative z-10 container mx-auto px-4 py-12 max-w-4xl"
+      >
         {/* Header */}
-        <motion.header
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-10"
-        >
-          <div className="inline-flex items-center gap-3 mb-4">
-            <div className="p-3 rounded-2xl bg-primary/20 backdrop-blur-sm">
-              <CalcIcon className="h-8 w-8 text-primary" />
-            </div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
-              Kalkulator Wycen
-            </h1>
-          </div>
-          <p className="text-slate-400 max-w-xl mx-auto">
-            Szybko i łatwo wyceniaj prace wykończeniowe. Dodawaj pokoje, ściany, okna i obliczaj koszty.
-          </p>
-          <p className="text-amber-400/80 text-sm mt-2 font-medium">
-            Wszystkie ceny są kwotami netto
+        <motion.header variants={itemVariants} className="text-center mb-16">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6"
+          >
+            <Sparkles className="h-4 w-4" />
+            Wszystkie ceny netto
+          </motion.div>
+          
+          <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-4">
+            <span className="bg-gradient-to-r from-foreground via-foreground to-muted-foreground bg-clip-text text-transparent">
+              Kalkulator
+            </span>
+            <br />
+            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              Wycen
+            </span>
+          </h1>
+          
+          <p className="text-muted-foreground text-lg max-w-md mx-auto">
+            Profesjonalne wyceny prac wykończeniowych w kilka kliknięć
           </p>
         </motion.header>
 
         {/* Add Room Button */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2 }}
-          className="flex justify-center mb-8"
-        >
-          <Button
-            onClick={() => createRoom()}
-            size="lg"
-            className="gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/25"
+        <motion.div variants={itemVariants} className="flex justify-center mb-12">
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
-            <Home className="h-5 w-5" />
-            <Plus className="h-4 w-4" />
-            Dodaj nowy pokój
-          </Button>
+            <Button
+              onClick={() => createRoom()}
+              size="lg"
+              className="gap-3 h-14 px-8 text-base font-medium rounded-2xl bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 shadow-lg shadow-primary/25 transition-all duration-300"
+            >
+              <Plus className="h-5 w-5" />
+              Dodaj pokój
+            </Button>
+          </motion.div>
         </motion.div>
 
         {/* Rooms List */}
         <div className="space-y-6">
           <AnimatePresence mode="popLayout">
-            {rooms.map((room) => (
-              <RoomCard
+            {rooms.map((room, index) => (
+              <motion.div
                 key={room.id}
-                room={room}
-                roomTotal={calculateRoomTotal(room)}
-                onUpdateName={(name) => updateRoomName(room.id, name)}
-                onDelete={() => deleteRoom(room.id)}
-                onAddWall={(w, h) => addWall(room.id, w, h)}
-                onDeleteWall={(wallId) => deleteWall(room.id, wallId)}
-                onAddWindow={(w, h) => addWindow(room.id, w, h)}
-                onDeleteWindow={(windowId) => deleteWindow(room.id, windowId)}
-                onAddCorner={(length) => addCorner(room.id, length)}
-                onDeleteCorner={(cornerId) => deleteCorner(room.id, cornerId)}
-                onAddGroove={(length) => addGroove(room.id, length)}
-                onDeleteGroove={(grooveId) => deleteGroove(room.id, grooveId)}
-                onAddAcrylic={(length) => addAcrylic(room.id, length)}
-                onDeleteAcrylic={(acrylicId) => deleteAcrylic(room.id, acrylicId)}
-                onSetFloorProtection={(area) => setFloorProtection(room.id, area)}
-                onToggleWorkType={(workTypeId) => toggleWorkType(room.id, workTypeId)}
-                onUpdateWorkTypePrice={(workTypeId, price) => updateWorkTypePrice(room.id, workTypeId, price)}
-                getWorkTypeQuantity={(workType) => getWorkTypeQuantity(room, workType)}
-              />
+                layout
+                initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                transition={{
+                  type: 'spring',
+                  stiffness: 100,
+                  damping: 15,
+                  delay: index * 0.05,
+                }}
+              >
+                <RoomCard
+                  room={room}
+                  roomTotal={calculateRoomTotal(room)}
+                  onUpdateName={(name) => updateRoomName(room.id, name)}
+                  onDelete={() => deleteRoom(room.id)}
+                  onAddWall={(w, h) => addWall(room.id, w, h)}
+                  onDeleteWall={(wallId) => deleteWall(room.id, wallId)}
+                  onAddWindow={(w, h) => addWindow(room.id, w, h)}
+                  onDeleteWindow={(windowId) => deleteWindow(room.id, windowId)}
+                  onAddCorner={(length) => addCorner(room.id, length)}
+                  onDeleteCorner={(cornerId) => deleteCorner(room.id, cornerId)}
+                  onAddGroove={(length) => addGroove(room.id, length)}
+                  onDeleteGroove={(grooveId) => deleteGroove(room.id, grooveId)}
+                  onAddAcrylic={(length) => addAcrylic(room.id, length)}
+                  onDeleteAcrylic={(acrylicId) => deleteAcrylic(room.id, acrylicId)}
+                  onSetFloorProtection={(area) => setFloorProtection(room.id, area)}
+                  onToggleWorkType={(workTypeId) => toggleWorkType(room.id, workTypeId)}
+                  onUpdateWorkTypePrice={(workTypeId, price) => updateWorkTypePrice(room.id, workTypeId, price)}
+                  getWorkTypeQuantity={(workType) => getWorkTypeQuantity(room, workType)}
+                />
+              </motion.div>
             ))}
           </AnimatePresence>
 
           {rooms.length === 0 && (
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center py-20"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center py-24"
             >
-              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-slate-800/50 mb-4">
-                <Home className="h-10 w-10 text-slate-500" />
-              </div>
-              <p className="text-slate-400 text-lg">
-                Brak pokoi do wyświetlenia
+              <motion.div
+                animate={{ 
+                  y: [0, -8, 0],
+                }}
+                transition={{ 
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+                className="inline-flex items-center justify-center w-24 h-24 rounded-3xl bg-gradient-to-br from-muted to-muted/50 mb-6"
+              >
+                <Plus className="h-10 w-10 text-muted-foreground" />
+              </motion.div>
+              <p className="text-xl font-medium text-foreground mb-2">
+                Zacznij nową wycenę
               </p>
-              <p className="text-slate-500 text-sm mt-2">
+              <p className="text-muted-foreground">
                 Kliknij przycisk powyżej, aby dodać pierwszy pokój
               </p>
             </motion.div>
           )}
         </div>
 
-        {/* Grand Total */}
+        {/* Summary */}
         {rooms.length > 0 && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-10 p-6 rounded-2xl bg-gradient-to-r from-green-500/20 to-emerald-500/20 backdrop-blur-md border border-green-500/30 shadow-2xl"
+            transition={{ type: 'spring', stiffness: 100, damping: 15 }}
+            className="mt-12 p-8 rounded-3xl glass-card border border-border/50"
           >
-            <div className="flex flex-col gap-6">
+            <div className="space-y-8">
               {/* VAT Selection */}
-              <div className="flex items-center gap-4">
-                <span className="text-sm text-slate-400">Stawka VAT:</span>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-muted-foreground">Stawka VAT</span>
                 <div className="flex gap-2">
-                  <Button
-                    variant={vatRate === 8 ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setVatRate(8)}
-                    className={vatRate === 8 ? "bg-primary" : "bg-slate-800/50 border-slate-600 hover:bg-slate-700"}
-                  >
-                    8%
-                  </Button>
-                  <Button
-                    variant={vatRate === 23 ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setVatRate(23)}
-                    className={vatRate === 23 ? "bg-primary" : "bg-slate-800/50 border-slate-600 hover:bg-slate-700"}
-                  >
-                    23%
-                  </Button>
+                  {[8, 23].map((rate) => (
+                    <motion.button
+                      key={rate}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setVatRate(rate as 8 | 23)}
+                      className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
+                        vatRate === rate
+                          ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25'
+                          : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                      }`}
+                    >
+                      {rate}%
+                    </motion.button>
+                  ))}
                 </div>
               </div>
 
+              {/* Divider */}
+              <div className="h-px bg-border" />
+
               {/* Totals */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-slate-400 uppercase tracking-wide">Suma całkowita</p>
-                  <p className="text-sm text-slate-500">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">
                     {rooms.length} {rooms.length === 1 ? 'pokój' : rooms.length < 5 ? 'pokoje' : 'pokoi'}
-                  </p>
-                </div>
-                <div className="text-right space-y-2">
-                  <motion.div
-                    key={grandTotal}
-                    initial={{ scale: 1.1 }}
-                    animate={{ scale: 1 }}
-                  >
-                    <p className="text-2xl font-bold text-slate-300">
+                  </span>
+                  <div className="text-right">
+                    <motion.span
+                      key={grandTotal}
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-2xl font-semibold"
+                    >
                       {grandTotal.toFixed(2)} zł
-                    </p>
-                    <p className="text-xs text-slate-500">netto</p>
-                  </motion.div>
+                    </motion.span>
+                    <span className="text-sm text-muted-foreground ml-2">netto</span>
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <span className="text-lg font-medium">Suma brutto</span>
                   <motion.div
                     key={grossTotal}
-                    initial={{ scale: 1.1 }}
-                    animate={{ scale: 1 }}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="text-right"
                   >
-                    <p className="text-4xl font-bold text-green-400">
+                    <span className="text-4xl font-bold bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">
                       {grossTotal.toFixed(2)} zł
-                    </p>
-                    <p className="text-xs text-slate-500">brutto (VAT {vatRate}%)</p>
+                    </span>
                   </motion.div>
                 </div>
               </div>
 
               {/* Export Button */}
-              <Button
-                onClick={() => exportToPdf({
-                  rooms,
-                  vatRate,
-                  calculateRoomTotal,
-                  getWorkTypeQuantity,
-                  grandTotal,
-                  grossTotal,
-                })}
-                size="lg"
-                className="w-full gap-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 shadow-lg"
+              <motion.div
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
               >
-                <FileDown className="h-5 w-5" />
-                Pobierz wycenę jako PDF
-              </Button>
+                <Button
+                  onClick={() => exportToPdf({
+                    rooms,
+                    vatRate,
+                    calculateRoomTotal,
+                    getWorkTypeQuantity,
+                    grandTotal,
+                    grossTotal,
+                  })}
+                  size="lg"
+                  variant="outline"
+                  className="w-full h-14 gap-3 rounded-2xl text-base font-medium border-2 hover:bg-muted/50 transition-all duration-300"
+                >
+                  <FileDown className="h-5 w-5" />
+                  Pobierz wycenę PDF
+                </Button>
+              </motion.div>
             </div>
           </motion.div>
         )}
 
         {/* Footer */}
-        <footer className="mt-16 text-center text-slate-500 text-sm space-y-1">
-          <p>Kalkulator prac wykończeniowych © 2025</p>
-          <p className="text-slate-600 font-medium">by Wojciech Olszak</p>
-        </footer>
-      </div>
+        <motion.footer
+          variants={itemVariants}
+          className="mt-20 text-center"
+        >
+          <p className="text-sm text-muted-foreground">
+            Kalkulator prac wykończeniowych © 2025
+          </p>
+          <p className="text-sm font-medium text-foreground/70 mt-1">
+            by Wojciech Olszak
+          </p>
+        </motion.footer>
+      </motion.div>
     </div>
   );
 };

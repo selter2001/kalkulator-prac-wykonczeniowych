@@ -1,14 +1,13 @@
-import { useState } from 'react';
+import { useState, ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 
 interface WallInputProps {
   onAdd: (width: number, height: number) => void;
   label: string;
-  icon: React.ReactNode;
+  icon?: ReactNode;
 }
 
 export const WallInput = ({ onAdd, label, icon }: WallInputProps) => {
@@ -29,17 +28,14 @@ export const WallInput = ({ onAdd, label, icon }: WallInputProps) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 5 }}
       animate={{ opacity: 1, y: 0 }}
-      className="p-4 rounded-xl bg-card/50 backdrop-blur-sm border border-border/50"
+      className="p-4 rounded-2xl bg-muted/30 border border-border/50"
     >
-      <div className="flex items-center gap-2 mb-3">
-        {icon}
-        <Label className="text-sm font-medium">{label}</Label>
-      </div>
-      <div className="flex gap-2 items-end">
-        <div className="flex-1">
-          <Label className="text-xs text-muted-foreground">Szerokość (m)</Label>
+      <div className="flex flex-wrap items-end gap-3">
+        {icon && <div className="hidden sm:block">{icon}</div>}
+        <div className="flex-1 min-w-[100px]">
+          <label className="text-xs text-muted-foreground mb-1.5 block">Szerokość</label>
           <Input
             type="number"
             step="0.01"
@@ -47,11 +43,11 @@ export const WallInput = ({ onAdd, label, icon }: WallInputProps) => {
             value={width}
             onChange={(e) => setWidth(e.target.value)}
             placeholder="0.00"
-            className="bg-background/50"
+            className="h-11 rounded-xl"
           />
         </div>
-        <div className="flex-1">
-          <Label className="text-xs text-muted-foreground">Wysokość (m)</Label>
+        <div className="flex-1 min-w-[100px]">
+          <label className="text-xs text-muted-foreground mb-1.5 block">Wysokość</label>
           <Input
             type="number"
             step="0.01"
@@ -59,23 +55,25 @@ export const WallInput = ({ onAdd, label, icon }: WallInputProps) => {
             value={height}
             onChange={(e) => setHeight(e.target.value)}
             placeholder="0.00"
-            className="bg-background/50"
+            className="h-11 rounded-xl"
           />
         </div>
-        <div className="flex-1">
-          <Label className="text-xs text-muted-foreground">m²</Label>
-          <div className="h-10 flex items-center px-3 rounded-md bg-accent/50 font-semibold">
-            {area.toFixed(2)}
+        <div className="flex-1 min-w-[80px]">
+          <label className="text-xs text-muted-foreground mb-1.5 block">Powierzchnia</label>
+          <div className="h-11 flex items-center px-4 rounded-xl bg-primary/5 border border-primary/20 font-semibold text-primary">
+            {area.toFixed(2)} m²
           </div>
         </div>
-        <Button
-          onClick={handleAdd}
-          size="icon"
-          className="bg-primary hover:bg-primary/90"
-          disabled={!width || !height || parseFloat(width) <= 0 || parseFloat(height) <= 0}
-        >
-          <Plus className="h-4 w-4" />
-        </Button>
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <Button
+            onClick={handleAdd}
+            disabled={!width || !height || parseFloat(width) <= 0 || parseFloat(height) <= 0}
+            className="h-11 px-5 rounded-xl gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            <span className="hidden sm:inline">{label}</span>
+          </Button>
+        </motion.div>
       </div>
     </motion.div>
   );

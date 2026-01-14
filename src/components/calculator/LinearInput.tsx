@@ -1,4 +1,5 @@
 import { useState, ReactNode } from 'react';
+import { motion } from 'framer-motion';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,9 +8,10 @@ interface LinearInputProps {
   onAdd: (length: number) => void;
   label: string;
   icon?: ReactNode;
+  placeholder?: string;
 }
 
-export const LinearInput = ({ onAdd, label, icon }: LinearInputProps) => {
+export const LinearInput = ({ onAdd, label, icon, placeholder = "Długość (m)" }: LinearInputProps) => {
   const [length, setLength] = useState<string>('');
 
   const handleAdd = () => {
@@ -21,33 +23,38 @@ export const LinearInput = ({ onAdd, label, icon }: LinearInputProps) => {
   };
 
   return (
-    <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/30 border border-border/30">
+    <motion.div 
+      initial={{ opacity: 0, y: 5 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="flex items-center gap-3 p-4 rounded-2xl bg-muted/30 border border-border/50"
+    >
       {icon}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3 flex-1">
         <Input
           type="number"
           step="0.01"
           min="0"
           value={length}
           onChange={(e) => setLength(e.target.value)}
-          placeholder="Długość (m)"
-          className="w-28 bg-background/50"
+          placeholder={placeholder}
+          className="w-32 h-11 rounded-xl"
           onKeyDown={(e) => {
             if (e.key === 'Enter') handleAdd();
           }}
         />
         <span className="text-sm text-muted-foreground">mb</span>
       </div>
-      <Button
-        size="sm"
-        variant="secondary"
-        onClick={handleAdd}
-        disabled={!length || parseFloat(length) <= 0}
-        className="gap-1"
-      >
-        <Plus className="h-4 w-4" />
-        {label}
-      </Button>
-    </div>
+      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+        <Button
+          size="sm"
+          onClick={handleAdd}
+          disabled={!length || parseFloat(length) <= 0}
+          className="gap-2 h-10 px-4 rounded-xl"
+        >
+          <Plus className="h-4 w-4" />
+          {label}
+        </Button>
+      </motion.div>
+    </motion.div>
   );
 };
