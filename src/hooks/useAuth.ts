@@ -16,7 +16,10 @@ export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [authMode, setAuthMode] = useState<AuthMode>(null);
+  const [authMode, setAuthMode] = useState<AuthMode>(() => {
+    // Initialize from localStorage so AuthGuard doesn't redirect before state updates
+    return localStorage.getItem('guestMode') === 'true' ? 'guest' : null;
+  });
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = async (userId: string) => {
@@ -47,6 +50,9 @@ export const useAuth = () => {
           }, 0);
         } else {
           setProfile(null);
+          // Respect guest mode across components (avoids redirect loop in AuthGuard)
+          const isGuest = localStorage.getItem('guestMode') === 'true';
+          setAuthMode(isGuest ? 'guest' : null);
         }
         setLoading(false);
       }
