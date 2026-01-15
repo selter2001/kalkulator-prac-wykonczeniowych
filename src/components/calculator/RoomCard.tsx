@@ -6,19 +6,19 @@ import {
   Edit3, 
   Check, 
   X,
-  Layers,
   Grid3X3,
   Paintbrush,
   CornerDownRight,
   Ruler,
   Droplets,
-  Shield
+  Shield,
+  Square
 } from 'lucide-react';
-import { Room, WorkType } from '@/types/calculator';
+import { Room, WorkType, WorkTypeUnit } from '@/types/calculator';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { WallInput } from './WallInput';
-import { ItemList } from './ItemList';
+import { AreaInput } from './AreaInput';
+import { AreaItemList } from './AreaItemList';
 import { WorkTypesList } from './WorkTypesList';
 import { LinearInput } from './LinearInput';
 import { LinearItemList } from './LinearItemList';
@@ -28,10 +28,10 @@ interface RoomCardProps {
   roomTotal: number;
   onUpdateName: (name: string) => void;
   onDelete: () => void;
-  onAddWall: (width: number, height: number) => void;
+  onAddWall: (area: number) => void;
   onDeleteWall: (wallId: string) => void;
-  onAddWindow: (width: number, height: number) => void;
-  onDeleteWindow: (windowId: string) => void;
+  onAddCeiling: (area: number) => void;
+  onDeleteCeiling: (ceilingId: string) => void;
   onAddCorner: (length: number) => void;
   onDeleteCorner: (cornerId: string) => void;
   onAddGroove: (length: number) => void;
@@ -41,6 +41,8 @@ interface RoomCardProps {
   onSetFloorProtection: (area: number) => void;
   onToggleWorkType: (workTypeId: string) => void;
   onUpdateWorkTypePrice: (workTypeId: string, price: number) => void;
+  onAddCustomWorkType: (name: string, unit: WorkTypeUnit, price: number) => void;
+  onDeleteWorkType: (workTypeId: string) => void;
   getWorkTypeQuantity: (workType: WorkType) => number;
 }
 
@@ -82,8 +84,8 @@ export const RoomCard = ({
   onDelete,
   onAddWall,
   onDeleteWall,
-  onAddWindow,
-  onDeleteWindow,
+  onAddCeiling,
+  onDeleteCeiling,
   onAddCorner,
   onDeleteCorner,
   onAddGroove,
@@ -93,6 +95,8 @@ export const RoomCard = ({
   onSetFloorProtection,
   onToggleWorkType,
   onUpdateWorkTypePrice,
+  onAddCustomWorkType,
+  onDeleteWorkType,
   getWorkTypeQuantity,
 }: RoomCardProps) => {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -201,8 +205,8 @@ export const RoomCard = ({
                 value={room.totalWallArea.toFixed(2)}
                 unit="m²"
               >
-                <WallInput onAdd={onAddWall} label="Dodaj ścianę" />
-                <ItemList
+                <AreaInput onAdd={onAddWall} label="Dodaj ścianę" />
+                <AreaItemList
                   items={room.walls}
                   onDelete={onDeleteWall}
                   label="Ściana"
@@ -210,19 +214,19 @@ export const RoomCard = ({
                 />
               </Section>
 
-              {/* Windows */}
+              {/* Ceilings */}
               <Section
-                icon={<Layers className="h-5 w-5 text-blue-500" />}
-                title="Okna / Drzwi"
-                value={`-${room.totalWindowArea.toFixed(2)}`}
+                icon={<Square className="h-5 w-5 text-indigo-500" />}
+                title="Sufity"
+                value={room.totalCeilingArea.toFixed(2)}
                 unit="m²"
               >
-                <WallInput onAdd={onAddWindow} label="Dodaj okno/drzwi" />
-                <ItemList
-                  items={room.windows}
-                  onDelete={onDeleteWindow}
-                  label="Okno"
-                  emptyMessage="Brak okien/drzwi"
+                <AreaInput onAdd={onAddCeiling} label="Dodaj sufit" />
+                <AreaItemList
+                  items={room.ceilings}
+                  onDelete={onDeleteCeiling}
+                  label="Sufit"
+                  emptyMessage="Brak sufitów"
                 />
               </Section>
 
@@ -307,6 +311,8 @@ export const RoomCard = ({
                   getQuantity={getWorkTypeQuantity}
                   onToggle={onToggleWorkType}
                   onPriceChange={onUpdateWorkTypePrice}
+                  onAddCustom={onAddCustomWorkType}
+                  onDelete={onDeleteWorkType}
                 />
               </Section>
             </div>

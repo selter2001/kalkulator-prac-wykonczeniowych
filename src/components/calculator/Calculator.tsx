@@ -39,8 +39,8 @@ export const Calculator = () => {
     deleteRoom,
     addWall,
     deleteWall,
-    addWindow,
-    deleteWindow,
+    addCeiling,
+    deleteCeiling,
     addCorner,
     deleteCorner,
     addGroove,
@@ -50,6 +50,8 @@ export const Calculator = () => {
     setFloorProtection,
     updateWorkTypePrice,
     toggleWorkType,
+    addCustomWorkType,
+    deleteWorkType,
     calculateRoomTotal,
     calculateGrandTotal,
     calculateGrossTotal,
@@ -140,10 +142,10 @@ export const Calculator = () => {
                   roomTotal={calculateRoomTotal(room)}
                   onUpdateName={(name) => updateRoomName(room.id, name)}
                   onDelete={() => deleteRoom(room.id)}
-                  onAddWall={(w, h) => addWall(room.id, w, h)}
+                  onAddWall={(area) => addWall(room.id, area)}
                   onDeleteWall={(wallId) => deleteWall(room.id, wallId)}
-                  onAddWindow={(w, h) => addWindow(room.id, w, h)}
-                  onDeleteWindow={(windowId) => deleteWindow(room.id, windowId)}
+                  onAddCeiling={(area) => addCeiling(room.id, area)}
+                  onDeleteCeiling={(ceilingId) => deleteCeiling(room.id, ceilingId)}
                   onAddCorner={(length) => addCorner(room.id, length)}
                   onDeleteCorner={(cornerId) => deleteCorner(room.id, cornerId)}
                   onAddGroove={(length) => addGroove(room.id, length)}
@@ -153,6 +155,8 @@ export const Calculator = () => {
                   onSetFloorProtection={(area) => setFloorProtection(room.id, area)}
                   onToggleWorkType={(workTypeId) => toggleWorkType(room.id, workTypeId)}
                   onUpdateWorkTypePrice={(workTypeId, price) => updateWorkTypePrice(room.id, workTypeId, price)}
+                  onAddCustomWorkType={(name, unit, price) => addCustomWorkType(room.id, name, unit, price)}
+                  onDeleteWorkType={(workTypeId) => deleteWorkType(room.id, workTypeId)}
                   getWorkTypeQuantity={(workType) => getWorkTypeQuantity(room, workType)}
                 />
               </motion.div>

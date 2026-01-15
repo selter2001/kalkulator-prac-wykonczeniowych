@@ -3,19 +3,17 @@ import { X } from 'lucide-react';
 
 interface Item {
   id: string;
-  width: number;
-  height: number;
   area: number;
 }
 
-interface ItemListProps {
+interface AreaItemListProps {
   items: Item[];
   onDelete: (id: string) => void;
   label: string;
   emptyMessage: string;
 }
 
-export const ItemList = ({ items, onDelete, label, emptyMessage }: ItemListProps) => {
+export const AreaItemList = ({ items, onDelete, label, emptyMessage }: AreaItemListProps) => {
   if (items.length === 0) {
     return (
       <p className="text-sm text-muted-foreground text-center py-3">
@@ -38,9 +36,6 @@ export const ItemList = ({ items, onDelete, label, emptyMessage }: ItemListProps
             className="group flex items-center gap-3 px-4 py-2.5 rounded-xl bg-card border border-border/50 shadow-sm"
           >
             <span className="text-xs text-muted-foreground">#{index + 1}</span>
-            <span className="text-sm">
-              {item.width} × {item.height}
-            </span>
             <span className="font-semibold text-primary">
               {item.area.toFixed(2)} m²
             </span>
