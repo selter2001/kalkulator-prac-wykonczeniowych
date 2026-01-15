@@ -303,24 +303,7 @@ export const RoomCard = ({
                 </div>
               </Section>
 
-              {/* Work Types */}
-              <Section
-                icon={<Paintbrush className="h-5 w-5 text-orange-500" />}
-                title="Rodzaje prac"
-                value=""
-                unit=""
-              >
-                <WorkTypesList
-                  workTypes={room.workTypes}
-                  getQuantity={getWorkTypeQuantity}
-                  onToggle={onToggleWorkType}
-                  onPriceChange={onUpdateWorkTypePrice}
-                  onAddCustom={onAddCustomWorkType}
-                  onDelete={onDeleteWorkType}
-                />
-              </Section>
-
-              {/* Custom Work Items Sections */}
+              {/* Custom Work Items Sections - display after Floor Protection */}
               {room.workTypes
                 .filter(wt => wt.isCustom && wt.enabled)
                 .map(workType => {
@@ -366,6 +349,23 @@ export const RoomCard = ({
                     </Section>
                   );
                 })}
+
+              {/* Work Types - at the end */}
+              <Section
+                icon={<Paintbrush className="h-5 w-5 text-orange-500" />}
+                title="Rodzaje prac"
+                value=""
+                unit=""
+              >
+                <WorkTypesList
+                  workTypes={room.workTypes}
+                  getQuantity={getWorkTypeQuantity}
+                  onToggle={onToggleWorkType}
+                  onPriceChange={onUpdateWorkTypePrice}
+                  onAddCustom={onAddCustomWorkType}
+                  onDelete={onDeleteWorkType}
+                />
+              </Section>
             </div>
           </motion.div>
         )}
