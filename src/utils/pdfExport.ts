@@ -45,7 +45,7 @@ export const exportToPdf = ({
   
   if (preparedBy) {
     y += 6;
-    doc.text(`Przygotował/a: ${preparedBy}`, pageWidth / 2, y, { align: 'center' });
+    doc.text(`Przygotowal/la: ${preparedBy}`, pageWidth / 2, y, { align: 'center' });
   }
   
   y += 8;
@@ -111,8 +111,8 @@ export const exportToPdf = ({
       checkPageBreak(8);
       const quantity = getWorkTypeQuantity(room, wt);
       const total = quantity * wt.pricePerMeter;
-      const unitLabel = wt.unit === 'm2' ? 'm2' : 'mb';
-      const priceLabel = wt.unit === 'm2' ? 'zl/m2' : 'zl/mb';
+      const unitLabel = wt.unit === 'm2' ? 'm2' : wt.unit === 'mb' ? 'mb' : 'szt.';
+      const priceLabel = wt.unit === 'm2' ? 'zl/m2' : wt.unit === 'mb' ? 'zl/mb' : 'zl/szt.';
 
       doc.text(wt.name, 20, y);
       doc.text(`${quantity.toFixed(2)} ${unitLabel}`, 105, y);

@@ -50,6 +50,7 @@ export const CustomWorkTypeInput = ({ onAdd }: CustomWorkTypeInputProps) => {
             <SelectContent>
               <SelectItem value="m2">m² (kwadratowe)</SelectItem>
               <SelectItem value="mb">mb (bieżące)</SelectItem>
+              <SelectItem value="szt">szt. (sztuki)</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -66,7 +67,7 @@ export const CustomWorkTypeInput = ({ onAdd }: CustomWorkTypeInputProps) => {
               className="h-11 rounded-xl w-20"
             />
             <span className="text-xs text-muted-foreground whitespace-nowrap">
-              zł/{unit === 'm2' ? 'm²' : 'mb'}
+              zł/{unit === 'm2' ? 'm²' : unit === 'mb' ? 'mb' : 'szt.'}
             </span>
           </div>
         </div>
