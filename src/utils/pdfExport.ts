@@ -12,7 +12,7 @@ interface ExportData {
   quoteName?: string;
 }
 
-export const exportToPdf = ({
+const generatePdfDocument = ({
   rooms,
   vatRate,
   calculateRoomTotal,
@@ -21,7 +21,7 @@ export const exportToPdf = ({
   grossTotal,
   preparedBy,
   quoteName,
-}: ExportData) => {
+}: ExportData): jsPDF => {
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
   let y = 20;
@@ -38,6 +38,14 @@ export const exportToPdf = ({
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(30, 30, 30);
   doc.text('WYCENA PRAC WYKONCZENIOWYCH', pageWidth / 2, y, { align: 'center' });
+  
+  if (quoteName) {
+    y += 8;
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(60, 60, 60);
+    doc.text(quoteName, pageWidth / 2, y, { align: 'center' });
+  }
   
   y += 10;
   doc.setFontSize(10);
@@ -178,12 +186,24 @@ export const exportToPdf = ({
   doc.setTextColor(130, 130, 130);
   doc.text('Wycena zostala wykonana automatycznie przez Kalkulator Wykonczeniowy by Wojciech Olszak', pageWidth / 2, 285, { align: 'center' });
 
+  return doc;
+};
+
+export const exportToPdf = (data: ExportData) => {
+  const doc = generatePdfDocument(data);
+  
   // Save
-  const sanitizedName = quoteName 
-    ? quoteName.replace(/[^a-zA-Z0-9ąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s-]/g, '').replace(/\s+/g, '_')
+  const sanitizedName = data.quoteName 
+    ? data.quoteName.replace(/[^a-zA-Z0-9ąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s-]/g, '').replace(/\s+/g, '_')
     : '';
-  const fileName = quoteName 
+  const fileName = data.quoteName 
     ? `${sanitizedName}_${new Date().toISOString().split('T')[0]}.pdf`
     : `wycena_${new Date().toISOString().split('T')[0]}.pdf`;
   doc.save(fileName);
+};
+
+export const generatePdfBlobUrl = (data: ExportData): string => {
+  const doc = generatePdfDocument(data);
+  const blob = doc.output('blob');
+  return URL.createObjectURL(blob);
 };
