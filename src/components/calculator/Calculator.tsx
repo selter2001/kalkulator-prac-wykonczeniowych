@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { RoomCard } from './RoomCard';
 import { exportToPdf } from '@/utils/pdfExport';
 import { UserMenu } from '@/components/UserMenu';
-
+import { AnimatedBackground } from './AnimatedBackground';
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -103,12 +103,8 @@ export const Calculator = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Subtle gradient background */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-accent/10 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2" />
-      </div>
+      {/* Animated cartoon background */}
+      <AnimatedBackground />
 
       <motion.div
         variants={containerVariants}
