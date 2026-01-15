@@ -6,11 +6,12 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
-import { Calculator, User, UserPlus, ArrowRight, Mail, Lock, ArrowLeft } from 'lucide-react';
+import { Calculator, User, UserPlus, ArrowRight, Mail, Lock, ArrowLeft, Building2, UserCircle } from 'lucide-react';
 import { z } from 'zod';
 
 const emailSchema = z.string().email('Nieprawidłowy adres email');
 const passwordSchema = z.string().min(6, 'Hasło musi mieć minimum 6 znaków');
+const fullNameSchema = z.string().min(2, 'Imię i nazwisko musi mieć minimum 2 znaki');
 
 type AuthView = 'selection' | 'login' | 'register' | 'forgot-password';
 
@@ -19,8 +20,10 @@ const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [companyName, setCompanyName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string; confirmPassword?: string }>({});
+  const [errors, setErrors] = useState<{ email?: string; password?: string; confirmPassword?: string; fullName?: string }>({});
   
   const { signIn, signUp, continueAsGuest, resetPassword } = useAuth();
   const { toast } = useToast();
@@ -47,8 +50,18 @@ const Auth = () => {
       }
     }
     
-    if (isRegister && password !== confirmPassword) {
-      newErrors.confirmPassword = 'Hasła nie są identyczne';
+    if (isRegister) {
+      if (password !== confirmPassword) {
+        newErrors.confirmPassword = 'Hasła nie są identyczne';
+      }
+      
+      try {
+        fullNameSchema.parse(fullName);
+      } catch (e) {
+        if (e instanceof z.ZodError) {
+          newErrors.fullName = e.errors[0].message;
+        }
+      }
     }
     
     setErrors(newErrors);
@@ -89,7 +102,7 @@ const Auth = () => {
     if (!validateForm(true)) return;
     
     setIsLoading(true);
-    const { error } = await signUp(email, password);
+    const { error } = await signUp(email, password, fullName, companyName || undefined);
     setIsLoading(false);
     
     if (error) {
@@ -153,6 +166,8 @@ const Auth = () => {
     setEmail('');
     setPassword('');
     setConfirmPassword('');
+    setFullName('');
+    setCompanyName('');
     setErrors({});
   };
 
@@ -283,21 +298,63 @@ const Auth = () => {
             )}
             
             {view === 'register' && (
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Potwierdź hasło</Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    placeholder="••••••••"
-                    value={confirmPassword}
-                    onChange={(e) => { setConfirmPassword(e.target.value); setErrors(prev => ({ ...prev, confirmPassword: undefined })); }}
-                    className={`pl-10 ${errors.confirmPassword ? 'border-destructive' : ''}`}
-                  />
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword">Potwierdź hasło</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      id="confirmPassword"
+                      type="password"
+                      placeholder="••••••••"
+                      value={confirmPassword}
+                      onChange={(e) => { setConfirmPassword(e.target.value); setErrors(prev => ({ ...prev, confirmPassword: undefined })); }}
+                      className={`pl-10 ${errors.confirmPassword ? 'border-destructive' : ''}`}
+                    />
+                  </div>
+                  {errors.confirmPassword && <p className="text-sm text-destructive">{errors.confirmPassword}</p>}
                 </div>
-                {errors.confirmPassword && <p className="text-sm text-destructive">{errors.confirmPassword}</p>}
-              </div>
+
+                <div className="pt-2 border-t">
+                  <p className="text-xs text-muted-foreground mb-3">
+                    Poniższe dane będą automatycznie wyświetlane na wycenach PDF jako autor wyceny.
+                  </p>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="fullName">Imię i nazwisko *</Label>
+                    <div className="relative">
+                      <UserCircle className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Input
+                        id="fullName"
+                        type="text"
+                        placeholder="Jan Kowalski"
+                        value={fullName}
+                        onChange={(e) => { setFullName(e.target.value); setErrors(prev => ({ ...prev, fullName: undefined })); }}
+                        className={`pl-10 ${errors.fullName ? 'border-destructive' : ''}`}
+                      />
+                    </div>
+                    {errors.fullName && <p className="text-sm text-destructive">{errors.fullName}</p>}
+                  </div>
+
+                  <div className="space-y-2 mt-3">
+                    <Label htmlFor="companyName">Nazwa firmy (opcjonalnie)</Label>
+                    <div className="relative">
+                      <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Input
+                        id="companyName"
+                        type="text"
+                        placeholder="np. Firma Budowlana XYZ"
+                        value={companyName}
+                        onChange={(e) => setCompanyName(e.target.value)}
+                        className="pl-10"
+                      />
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Jeśli podasz nazwę firmy, będzie ona wyświetlana na wycenach. W przeciwnym razie użyte zostanie imię i nazwisko.
+                    </p>
+                  </div>
+                </div>
+              </>
             )}
             
             <Button type="submit" className="w-full h-12" disabled={isLoading}>
