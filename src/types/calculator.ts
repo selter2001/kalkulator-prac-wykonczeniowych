@@ -10,6 +10,11 @@ export interface Ceiling {
 
 export type WorkTypeUnit = 'm2' | 'mb' | 'szt';
 
+export interface CustomItem {
+  id: string;
+  value: number;
+}
+
 export interface WorkType {
   id: string;
   name: string;
@@ -17,7 +22,7 @@ export interface WorkType {
   enabled: boolean;
   unit: WorkTypeUnit;
   isCustom?: boolean;
-  customQuantity?: number;
+  customItems?: CustomItem[];
 }
 
 export interface LinearItem {

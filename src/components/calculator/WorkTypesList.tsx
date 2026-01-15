@@ -10,7 +10,6 @@ interface WorkTypesListProps {
   getQuantity: (workType: WorkType) => number;
   onToggle: (id: string) => void;
   onPriceChange: (id: string, price: number) => void;
-  onQuantityChange: (id: string, quantity: number) => void;
   onAddCustom: (name: string, unit: WorkTypeUnit, price: number) => void;
   onDelete: (id: string) => void;
 }
@@ -20,7 +19,6 @@ export const WorkTypesList = ({
   getQuantity, 
   onToggle, 
   onPriceChange,
-  onQuantityChange,
   onAddCustom,
   onDelete 
 }: WorkTypesListProps) => {
@@ -73,23 +71,6 @@ export const WorkTypesList = ({
               </div>
               
               <div className="flex items-center gap-4">
-                {/* Custom quantity input for custom work types */}
-                {workType.isCustom && (
-                  <div className="flex items-center gap-2">
-                    <Input
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      value={workType.customQuantity || ''}
-                      onChange={(e) => onQuantityChange(workType.id, parseFloat(e.target.value) || 0)}
-                      placeholder="Ilość"
-                      className="w-20 h-10 text-center rounded-xl"
-                    />
-                    <span className="text-xs text-muted-foreground whitespace-nowrap">
-                      {quantityLabel}
-                    </span>
-                  </div>
-                )}
                 
                 <div className="flex items-center gap-2">
                   <Input

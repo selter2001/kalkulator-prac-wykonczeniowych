@@ -52,9 +52,10 @@ export const Calculator = () => {
     deleteAcrylic,
     setFloorProtection,
     updateWorkTypePrice,
-    updateWorkTypeQuantity,
     toggleWorkType,
     addCustomWorkType,
+    addCustomWorkItem,
+    deleteCustomWorkItem,
     deleteWorkType,
     calculateRoomTotal,
     calculateGrandTotal,
@@ -180,8 +181,9 @@ export const Calculator = () => {
                   onSetFloorProtection={(area) => setFloorProtection(room.id, area)}
                   onToggleWorkType={(workTypeId) => toggleWorkType(room.id, workTypeId)}
                   onUpdateWorkTypePrice={(workTypeId, price) => updateWorkTypePrice(room.id, workTypeId, price)}
-                  onUpdateWorkTypeQuantity={(workTypeId, quantity) => updateWorkTypeQuantity(room.id, workTypeId, quantity)}
                   onAddCustomWorkType={(name, unit, price) => addCustomWorkType(room.id, name, unit, price)}
+                  onAddCustomWorkItem={(workTypeId, value) => addCustomWorkItem(room.id, workTypeId, value)}
+                  onDeleteCustomWorkItem={(workTypeId, itemId) => deleteCustomWorkItem(room.id, workTypeId, itemId)}
                   onDeleteWorkType={(workTypeId) => deleteWorkType(room.id, workTypeId)}
                   getWorkTypeQuantity={(workType) => getWorkTypeQuantity(room, workType)}
                 />
