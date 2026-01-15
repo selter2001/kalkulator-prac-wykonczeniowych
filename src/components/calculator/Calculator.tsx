@@ -130,31 +130,21 @@ export const Calculator = () => {
           <UserMenu />
         </motion.div>
 
-        {/* Header */}
-        <motion.header variants={itemVariants} className="text-center mb-16">
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6"
-          >
-            <Sparkles className="h-4 w-4" />
+        {/* Header - compact version for logged in users */}
+        <motion.header variants={itemVariants} className="text-center mb-8">
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <h1 className="text-xl md:text-2xl font-semibold tracking-tight">
+              <span className="text-foreground/80">Kalkulator</span>
+              {' '}
+              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                prac wykończeniowych
+              </span>
+            </h1>
+          </div>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
+            <Sparkles className="h-3 w-3" />
             Wszystkie ceny netto
-          </motion.div>
-          
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
-            <span className="bg-gradient-to-r from-foreground via-foreground to-muted-foreground bg-clip-text text-transparent">
-              Kalkulator
-            </span>
-            <br />
-            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              prac wykończeniowych
-            </span>
-          </h1>
-          
-          <p className="text-muted-foreground text-base md:text-lg max-w-lg mx-auto leading-relaxed">
-            Rób wyceny jak profesjonalista — bez Excela, bez tabelek. Prostota i jakość w jednej aplikacji.
-          </p>
+          </div>
         </motion.header>
 
         {/* Prepared By Input */}
