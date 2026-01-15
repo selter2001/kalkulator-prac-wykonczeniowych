@@ -3,12 +3,13 @@ import { Room, WorkType, VatRate } from '@/types/calculator';
 
 interface ExportData {
   rooms: Room[];
-  vatRate: VatRate;
+  vatRate: VatRate | number;
   calculateRoomTotal: (room: Room) => number;
   getWorkTypeQuantity: (room: Room, workType: WorkType) => number;
   grandTotal: number;
   grossTotal: number;
   preparedBy?: string;
+  quoteName?: string;
 }
 
 export const exportToPdf = ({
@@ -19,6 +20,7 @@ export const exportToPdf = ({
   grandTotal,
   grossTotal,
   preparedBy,
+  quoteName,
 }: ExportData) => {
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -177,6 +179,11 @@ export const exportToPdf = ({
   doc.text('Wycena zostala wykonana automatycznie przez Kalkulator Wykonczeniowy by Wojciech Olszak', pageWidth / 2, 285, { align: 'center' });
 
   // Save
-  const fileName = `wycena_${new Date().toISOString().split('T')[0]}.pdf`;
+  const sanitizedName = quoteName 
+    ? quoteName.replace(/[^a-zA-Z0-9ąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s-]/g, '').replace(/\s+/g, '_')
+    : '';
+  const fileName = quoteName 
+    ? `${sanitizedName}_${new Date().toISOString().split('T')[0]}.pdf`
+    : `wycena_${new Date().toISOString().split('T')[0]}.pdf`;
   doc.save(fileName);
 };

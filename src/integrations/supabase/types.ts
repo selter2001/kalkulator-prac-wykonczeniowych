@@ -44,6 +44,39 @@ export type Database = {
         }
         Relationships: []
       }
+      quotes: {
+        Row: {
+          created_at: string
+          data: Json
+          id: string
+          name: string
+          prepared_by: string | null
+          updated_at: string
+          user_id: string
+          vat_rate: number
+        }
+        Insert: {
+          created_at?: string
+          data: Json
+          id?: string
+          name: string
+          prepared_by?: string | null
+          updated_at?: string
+          user_id: string
+          vat_rate?: number
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: string
+          name?: string
+          prepared_by?: string | null
+          updated_at?: string
+          user_id?: string
+          vat_rate?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

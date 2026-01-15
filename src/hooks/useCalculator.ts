@@ -9,6 +9,8 @@ export const useCalculator = () => {
   const [vatRate, setVatRate] = useState<VatRate>(23);
   const [preparedBy, setPreparedBy] = useState<string>('');
   const [isProfileNameConfirmed, setIsProfileNameConfirmed] = useState(false);
+  const [currentQuoteId, setCurrentQuoteId] = useState<string | null>(null);
+  const [currentQuoteName, setCurrentQuoteName] = useState<string>('');
   
   const { profile, authMode, getDisplayName } = useAuth();
 
@@ -277,14 +279,36 @@ export const useCalculator = () => {
     return netTotal * (1 + vatRate / 100);
   }, [calculateGrandTotal, vatRate]);
 
+  const loadQuoteData = useCallback((quoteId: string, quoteName: string, quoteRooms: Room[], quoteVatRate: number, quotePreparedBy: string | null) => {
+    setCurrentQuoteId(quoteId);
+    setCurrentQuoteName(quoteName);
+    setRooms(quoteRooms);
+    setVatRate(quoteVatRate as VatRate);
+    if (quotePreparedBy) {
+      setPreparedBy(quotePreparedBy);
+    }
+  }, []);
+
+  const clearCurrentQuote = useCallback(() => {
+    setCurrentQuoteId(null);
+    setCurrentQuoteName('');
+    setRooms([]);
+  }, []);
+
   return {
     rooms,
+    setRooms,
     vatRate,
     setVatRate,
     preparedBy,
     setPreparedBy,
     isProfileNameConfirmed,
     confirmProfileName,
+    currentQuoteId,
+    currentQuoteName,
+    setCurrentQuoteName,
+    loadQuoteData,
+    clearCurrentQuote,
     createRoom,
     updateRoomName,
     deleteRoom,
