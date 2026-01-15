@@ -212,52 +212,65 @@ const PaintDrops = () => (
 
 export const AnimatedBackground = () => {
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
       {/* Base gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-background to-amber-50/50 dark:from-blue-950/10 dark:via-background dark:to-amber-950/10" />
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-100/60 via-background to-amber-100/60 dark:from-blue-900/20 dark:via-background dark:to-amber-900/20" />
       
-      {/* Soft glow effects - very subtle */}
+      {/* Soft glow effects */}
       <motion.div 
-        className="absolute -top-20 -right-20 w-[250px] h-[250px] md:w-[400px] md:h-[400px] bg-blue-400/10 rounded-full blur-[80px] md:blur-[120px]"
-        animate={{ scale: [1, 1.1, 1], opacity: [0.1, 0.15, 0.1] }}
+        className="absolute -top-10 -right-10 w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-blue-400/20 rounded-full blur-[80px] md:blur-[120px]"
+        animate={{ scale: [1, 1.1, 1], opacity: [0.15, 0.25, 0.15] }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div 
-        className="absolute -bottom-20 -left-20 w-[200px] h-[200px] md:w-[350px] md:h-[350px] bg-amber-400/10 rounded-full blur-[60px] md:blur-[100px]"
-        animate={{ scale: [1, 1.1, 1], opacity: [0.1, 0.12, 0.1] }}
+        className="absolute -bottom-10 -left-10 w-[250px] h-[250px] md:w-[400px] md:h-[400px] bg-amber-400/20 rounded-full blur-[60px] md:blur-[100px]"
+        animate={{ scale: [1, 1.1, 1], opacity: [0.15, 0.2, 0.15] }}
         transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
       />
 
-      {/* Paint drops falling - subtle */}
+      {/* Paint drops falling */}
       <PaintDrops />
 
-      {/* === MOBILE ELEMENTS - subtle, at edges only === */}
+      {/* === MOBILE ELEMENTS - visible at edges === */}
       <div className="block md:hidden">
-        {/* Top left corner - small worker peeking */}
+        {/* Top left corner - worker */}
         <PaintWorker 
           delay={0.2} 
-          className="absolute -top-2 -left-10 w-20 h-20 opacity-25"
+          className="absolute top-4 -left-6 w-24 h-24 opacity-50"
         />
         
-        {/* Top right corner - small bucket */}
+        {/* Top right corner - bucket */}
         <PaintBucket 
           delay={0.5} 
           color="#10B981" 
-          className="absolute top-16 -right-6 w-14 h-14 opacity-20"
+          className="absolute top-20 -right-3 w-16 h-16 opacity-45"
         />
         
-        {/* Bottom left - paintbrush */}
+        {/* Middle left - paintbrush */}
         <Paintbrush 
           delay={0.7} 
           rotate={-30}
-          className="absolute bottom-32 -left-12 w-20 h-10 opacity-20"
+          className="absolute top-[40%] -left-8 w-24 h-12 opacity-40"
         />
         
-        {/* Bottom right - trowel */}
+        {/* Middle right - measuring tape */}
+        <MeasuringTape 
+          delay={0.4}
+          className="absolute top-[55%] -right-16 w-32 h-12 opacity-40"
+        />
+        
+        {/* Bottom left - trowel */}
         <Trowel 
           delay={0.6} 
-          rotate={20}
-          className="absolute bottom-20 -right-4 w-10 h-16 opacity-20"
+          rotate={-20}
+          className="absolute bottom-40 -left-3 w-12 h-18 opacity-40"
+        />
+        
+        {/* Bottom right - bucket */}
+        <PaintBucket 
+          delay={0.8} 
+          color="#8B5CF6" 
+          className="absolute bottom-24 -right-4 w-14 h-14 opacity-40"
         />
       </div>
 
@@ -266,41 +279,41 @@ export const AnimatedBackground = () => {
         {/* Left side - Paint worker */}
         <PaintWorker 
           delay={0.2} 
-          className="absolute top-32 -left-4 lg:left-4 w-32 lg:w-44 h-32 lg:h-44 opacity-40"
+          className="absolute top-28 left-2 lg:left-8 w-36 lg:w-48 h-36 lg:h-48 opacity-60"
         />
         
         {/* Left side - Paint bucket */}
         <PaintBucket 
           delay={0.5} 
           color="#10B981" 
-          className="absolute top-[50%] -left-4 lg:left-8 w-20 lg:w-28 h-20 lg:h-28 opacity-30"
+          className="absolute top-[48%] left-4 lg:left-12 w-24 lg:w-32 h-24 lg:h-32 opacity-50"
         />
         
         {/* Left bottom - Trowel */}
         <Trowel 
           delay={0.7} 
           rotate={-15}
-          className="absolute bottom-24 -left-2 lg:left-6 w-14 lg:w-20 h-20 lg:h-28 opacity-30"
+          className="absolute bottom-28 left-4 lg:left-12 w-16 lg:w-24 h-24 lg:h-32 opacity-50"
         />
         
         {/* Right side - Paintbrush */}
         <Paintbrush 
           delay={0.3} 
           rotate={-20}
-          className="absolute top-40 -right-8 lg:right-4 w-28 lg:w-36 h-12 lg:h-16 opacity-35"
+          className="absolute top-36 right-2 lg:right-8 w-32 lg:w-40 h-14 lg:h-18 opacity-55"
         />
         
         {/* Right side - Measuring tape */}
         <MeasuringTape 
           delay={0.6}
-          className="absolute top-[55%] -right-12 lg:right-0 w-36 lg:w-44 h-14 lg:h-18 opacity-30"
+          className="absolute top-[52%] right-0 lg:right-4 w-40 lg:w-48 h-16 lg:h-20 opacity-50"
         />
         
         {/* Right bottom - Paint bucket */}
         <PaintBucket 
           delay={0.8} 
           color="#8B5CF6" 
-          className="absolute bottom-20 -right-6 lg:right-6 w-20 lg:w-26 h-20 lg:h-26 opacity-25"
+          className="absolute bottom-24 right-4 lg:right-12 w-24 lg:w-28 h-24 lg:h-28 opacity-45"
         />
       </div>
 
