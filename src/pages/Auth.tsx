@@ -184,44 +184,48 @@ const Auth = () => {
               Oblicz koszty wykończenia swojego mieszkania
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-5">
+            {/* Primary action - Login */}
             <Button 
-              className="w-full h-14 text-lg gap-3" 
+              className="w-full h-14 text-lg gap-3 shadow-md hover:shadow-lg transition-shadow" 
               onClick={() => { resetForm(); setView('login'); }}
             >
               <User className="w-5 h-5" />
               Zaloguj się
             </Button>
             
+            {/* Secondary action - Register */}
             <Button 
-              variant="outline" 
-              className="w-full h-14 text-lg gap-3"
+              variant="secondary" 
+              className="w-full h-12 text-base gap-3 border border-border/50 hover:bg-secondary/80"
               onClick={() => { resetForm(); setView('register'); }}
             >
               <UserPlus className="w-5 h-5" />
-              Utwórz konto
+              Utwórz nowe konto
             </Button>
             
-            <div className="relative py-4">
+            {/* Divider */}
+            <div className="relative py-2">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
+                <span className="w-full border-t border-border/60" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">lub</span>
+                <span className="bg-card px-3 text-muted-foreground/70">lub kontynuuj bez konta</span>
               </div>
             </div>
             
-            <Button 
-              variant="ghost" 
-              className="w-full h-14 text-lg gap-3 text-muted-foreground hover:text-foreground"
+            {/* Tertiary action - Guest mode */}
+            <button 
+              type="button"
+              className="w-full flex items-center justify-center gap-2 py-3 px-4 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-md transition-colors"
               onClick={handleGuestMode}
             >
-              <ArrowRight className="w-5 h-5" />
-              Kontynuuj jako gość
-            </Button>
+              <ArrowRight className="w-4 h-4" />
+              <span>Pomiń i przejdź do kalkulatora</span>
+            </button>
             
-            <p className="text-xs text-center text-muted-foreground mt-4">
-              Jako gość możesz korzystać z kalkulatora, ale Twoje dane nie zostaną zapisane.
+            <p className="text-xs text-center text-muted-foreground/80 leading-relaxed">
+              W trybie gościa możesz korzystać z kalkulatora, ale wyceny nie zostaną zapisane na Twoim koncie.
             </p>
           </CardContent>
         </Card>
