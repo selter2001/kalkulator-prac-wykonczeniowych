@@ -41,8 +41,9 @@ interface RoomCardProps {
   onSetFloorProtection: (area: number) => void;
   onToggleWorkType: (workTypeId: string) => void;
   onUpdateWorkTypePrice: (workTypeId: string, price: number) => void;
-  onUpdateWorkTypeQuantity: (workTypeId: string, quantity: number) => void;
   onAddCustomWorkType: (name: string, unit: WorkTypeUnit, price: number) => void;
+  onAddCustomWorkItem: (workTypeId: string, value: number) => void;
+  onDeleteCustomWorkItem: (workTypeId: string, itemId: string) => void;
   onDeleteWorkType: (workTypeId: string) => void;
   getWorkTypeQuantity: (workType: WorkType) => number;
 }
@@ -96,8 +97,9 @@ export const RoomCard = ({
   onSetFloorProtection,
   onToggleWorkType,
   onUpdateWorkTypePrice,
-  onUpdateWorkTypeQuantity,
   onAddCustomWorkType,
+  onAddCustomWorkItem,
+  onDeleteCustomWorkItem,
   onDeleteWorkType,
   getWorkTypeQuantity,
 }: RoomCardProps) => {
@@ -313,11 +315,57 @@ export const RoomCard = ({
                   getQuantity={getWorkTypeQuantity}
                   onToggle={onToggleWorkType}
                   onPriceChange={onUpdateWorkTypePrice}
-                  onQuantityChange={onUpdateWorkTypeQuantity}
                   onAddCustom={onAddCustomWorkType}
                   onDelete={onDeleteWorkType}
                 />
               </Section>
+
+              {/* Custom Work Items Sections */}
+              {room.workTypes
+                .filter(wt => wt.isCustom && wt.enabled)
+                .map(workType => {
+                  const total = (workType.customItems || []).reduce((sum, item) => sum + item.value, 0);
+                  const unitLabel = workType.unit === 'm2' ? 'm²' : workType.unit === 'mb' ? 'mb' : 'szt.';
+                  
+                  return (
+                    <Section
+                      key={workType.id}
+                      icon={<Paintbrush className="h-5 w-5 text-accent" />}
+                      title={workType.name}
+                      value={total.toFixed(2)}
+                      unit={unitLabel}
+                    >
+                      {workType.unit === 'm2' ? (
+                        <>
+                          <AreaInput 
+                            onAdd={(value) => onAddCustomWorkItem(workType.id, value)} 
+                            label="Dodaj" 
+                          />
+                          <AreaItemList
+                            items={(workType.customItems || []).map(item => ({ id: item.id, area: item.value }))}
+                            onDelete={(itemId) => onDeleteCustomWorkItem(workType.id, itemId)}
+                            label={workType.name}
+                            emptyMessage={`Dodaj pierwszy element`}
+                          />
+                        </>
+                      ) : (
+                        <>
+                          <LinearInput 
+                            onAdd={(value) => onAddCustomWorkItem(workType.id, value)} 
+                            label="Dodaj" 
+                            placeholder={workType.unit === 'szt' ? "Ilość" : "Długość"}
+                          />
+                          <LinearItemList
+                            items={(workType.customItems || []).map(item => ({ id: item.id, length: item.value }))}
+                            onDelete={(itemId) => onDeleteCustomWorkItem(workType.id, itemId)}
+                            label={workType.name}
+                            emptyMessage={`Dodaj pierwszy element`}
+                          />
+                        </>
+                      )}
+                    </Section>
+                  );
+                })}
             </div>
           </motion.div>
         )}

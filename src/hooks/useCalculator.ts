@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Room, Wall, Ceiling, WorkType, LinearItem, defaultWorkTypes, VatRate, WorkTypeUnit } from '@/types/calculator';
+import { Room, Wall, Ceiling, WorkType, LinearItem, defaultWorkTypes, VatRate, WorkTypeUnit, CustomItem } from '@/types/calculator';
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
 
@@ -112,7 +112,7 @@ export const useCalculator = () => {
       enabled: true,
       unit,
       isCustom: true,
-      customQuantity: 0,
+      customItems: [],
     };
     
     setRooms(prev => prev.map(room => {
@@ -121,11 +121,26 @@ export const useCalculator = () => {
     }));
   }, []);
 
-  const updateWorkTypeQuantity = useCallback((roomId: string, workTypeId: string, quantity: number) => {
+  const addCustomWorkItem = useCallback((roomId: string, workTypeId: string, value: number) => {
+    const newItem: CustomItem = { id: generateId(), value };
     setRooms(prev => prev.map(room => {
       if (room.id !== roomId) return room;
       const workTypes = room.workTypes.map(wt => 
-        wt.id === workTypeId ? { ...wt, customQuantity: quantity } : wt
+        wt.id === workTypeId 
+          ? { ...wt, customItems: [...(wt.customItems || []), newItem] } 
+          : wt
+      );
+      return { ...room, workTypes };
+    }));
+  }, []);
+
+  const deleteCustomWorkItem = useCallback((roomId: string, workTypeId: string, itemId: string) => {
+    setRooms(prev => prev.map(room => {
+      if (room.id !== roomId) return room;
+      const workTypes = room.workTypes.map(wt => 
+        wt.id === workTypeId 
+          ? { ...wt, customItems: (wt.customItems || []).filter(item => item.id !== itemId) } 
+          : wt
       );
       return { ...room, workTypes };
     }));
@@ -203,9 +218,9 @@ export const useCalculator = () => {
   }, []);
 
   const getWorkTypeQuantity = useCallback((room: Room, workType: WorkType): number => {
-    // Custom work types use their own quantity input
+    // Custom work types sum their items
     if (workType.isCustom) {
-      return workType.customQuantity || 0;
+      return (workType.customItems || []).reduce((sum, item) => sum + item.value, 0);
     }
     
     if (workType.unit === 'm2') {
@@ -261,7 +276,8 @@ export const useCalculator = () => {
     deleteAcrylic,
     setFloorProtection,
     updateWorkTypePrice,
-    updateWorkTypeQuantity,
+    addCustomWorkItem,
+    deleteCustomWorkItem,
     toggleWorkType,
     addCustomWorkType,
     deleteWorkType,
