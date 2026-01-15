@@ -32,11 +32,13 @@ import {
   Loader2,
   Cloud,
   Calendar,
+  Download,
 } from 'lucide-react';
 import { useQuotes } from '@/hooks/useQuotes';
 import { SavedQuote } from '@/types/quote';
-import { exportToPdf } from '@/utils/pdfExport';
+import { exportToPdf, generatePdfBlobUrl } from '@/utils/pdfExport';
 import { useToast } from '@/hooks/use-toast';
+import { PdfPreviewDialog } from './PdfPreviewDialog';
 
 interface QuotesManagerProps {
   onLoadQuote: (quote: SavedQuote) => void;
@@ -55,6 +57,11 @@ export const QuotesManager = ({
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [quoteToDelete, setQuoteToDelete] = useState<SavedQuote | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  
+  // PDF Preview state
+  const [previewDialogOpen, setPreviewDialogOpen] = useState(false);
+  const [previewPdfUrl, setPreviewPdfUrl] = useState<string | null>(null);
+  const [previewQuote, setPreviewQuote] = useState<SavedQuote | null>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -71,7 +78,7 @@ export const QuotesManager = ({
     });
   };
 
-  const handlePreviewQuote = (quote: SavedQuote) => {
+  const getQuotePdfData = (quote: SavedQuote) => {
     const grandTotal = quote.data.reduce((sum, room) => {
       return sum + calculateRoomTotal(room);
     }, 0);
@@ -79,7 +86,7 @@ export const QuotesManager = ({
     const vatAmount = grandTotal * (quote.vat_rate / 100);
     const grossTotal = grandTotal + vatAmount;
 
-    exportToPdf({
+    return {
       rooms: quote.data,
       vatRate: quote.vat_rate as 8 | 23,
       getWorkTypeQuantity,
@@ -88,7 +95,29 @@ export const QuotesManager = ({
       grossTotal,
       preparedBy: quote.prepared_by || '',
       quoteName: quote.name,
-    });
+    };
+  };
+
+  const handlePreviewQuote = (quote: SavedQuote) => {
+    const pdfData = getQuotePdfData(quote);
+    const blobUrl = generatePdfBlobUrl(pdfData);
+    setPreviewPdfUrl(blobUrl);
+    setPreviewQuote(quote);
+    setPreviewDialogOpen(true);
+  };
+
+  const handleDownloadQuote = (quote: SavedQuote) => {
+    const pdfData = getQuotePdfData(quote);
+    exportToPdf(pdfData);
+  };
+
+  const handleClosePreview = () => {
+    if (previewPdfUrl) {
+      URL.revokeObjectURL(previewPdfUrl);
+    }
+    setPreviewPdfUrl(null);
+    setPreviewQuote(null);
+    setPreviewDialogOpen(false);
   };
 
   const handleDeleteClick = (quote: SavedQuote) => {
@@ -214,7 +243,15 @@ export const QuotesManager = ({
                           className="flex-1"
                         >
                           <Eye className="h-4 w-4 mr-1" />
-                          Podgląd PDF
+                          Podgląd
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleDownloadQuote(quote)}
+                          className="text-muted-foreground hover:text-foreground"
+                        >
+                          <Download className="h-4 w-4" />
                         </Button>
                         <Button
                           size="sm"
@@ -260,6 +297,15 @@ export const QuotesManager = ({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* PDF Preview Dialog */}
+      <PdfPreviewDialog
+        isOpen={previewDialogOpen}
+        onClose={handleClosePreview}
+        pdfUrl={previewPdfUrl}
+        quoteName={previewQuote?.name || ''}
+        onDownload={() => previewQuote && handleDownloadQuote(previewQuote)}
+      />
     </>
   );
 };
