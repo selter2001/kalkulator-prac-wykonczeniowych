@@ -55,7 +55,7 @@ export const defaultWorkTypes: Omit<WorkType, 'id'>[] = [
   { name: 'Gruntowanie', pricePerMeter: 0, enabled: false, unit: 'm2' },
   { name: 'Szpachlowanie', pricePerMeter: 0, enabled: false, unit: 'm2' },
   { name: 'Oklejanie (zabezpieczenie posadzki)', pricePerMeter: 0, enabled: false, unit: 'm2' },
-  { name: 'Narożniki', pricePerMeter: 0, enabled: false, unit: 'mb' },
+  { name: 'Narozniki', pricePerMeter: 0, enabled: false, unit: 'mb' },
   { name: 'Zarzucanie bruzd', pricePerMeter: 0, enabled: false, unit: 'mb' },
   { name: 'Akrylowanie', pricePerMeter: 0, enabled: false, unit: 'mb' },
 ];
