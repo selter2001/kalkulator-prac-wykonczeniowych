@@ -45,7 +45,7 @@ export const exportToPdf = ({
   
   if (preparedBy) {
     y += 6;
-    doc.text(`Przygotowal/la: ${preparedBy}`, pageWidth / 2, y, { align: 'center' });
+    doc.text(preparedBy, pageWidth / 2, y, { align: 'center' });
   }
   
   y += 8;
