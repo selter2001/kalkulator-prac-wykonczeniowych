@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Room, Wall, Window, WorkType, LinearItem, defaultWorkTypes, VatRate } from '@/types/calculator';
+import { Room, Wall, Ceiling, WorkType, LinearItem, defaultWorkTypes, VatRate, WorkTypeUnit } from '@/types/calculator';
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
 
@@ -12,14 +12,14 @@ export const useCalculator = () => {
       id: generateId(),
       name,
       walls: [],
-      windows: [],
+      ceilings: [],
       workTypes: defaultWorkTypes.map(wt => ({ ...wt, id: generateId() })),
       corners: [],
       grooves: [],
       acrylic: [],
       floorProtection: 0,
       totalWallArea: 0,
-      totalWindowArea: 0,
+      totalCeilingArea: 0,
       totalCorners: 0,
       totalGrooves: 0,
       totalAcrylic: 0,
@@ -39,15 +39,14 @@ export const useCalculator = () => {
     setRooms(prev => prev.filter(room => room.id !== roomId));
   }, []);
 
-  const addWall = useCallback((roomId: string, width: number, height: number) => {
-    const area = width * height;
-    const newWall: Wall = { id: generateId(), width, height, area };
+  const addWall = useCallback((roomId: string, area: number) => {
+    const newWall: Wall = { id: generateId(), area };
     
     setRooms(prev => prev.map(room => {
       if (room.id !== roomId) return room;
       const walls = [...room.walls, newWall];
       const totalWallArea = walls.reduce((sum, w) => sum + w.area, 0);
-      const netArea = totalWallArea - room.totalWindowArea;
+      const netArea = totalWallArea + room.totalCeilingArea;
       return { ...room, walls, totalWallArea, netArea };
     }));
   }, []);
@@ -57,31 +56,30 @@ export const useCalculator = () => {
       if (room.id !== roomId) return room;
       const walls = room.walls.filter(w => w.id !== wallId);
       const totalWallArea = walls.reduce((sum, w) => sum + w.area, 0);
-      const netArea = totalWallArea - room.totalWindowArea;
+      const netArea = totalWallArea + room.totalCeilingArea;
       return { ...room, walls, totalWallArea, netArea };
     }));
   }, []);
 
-  const addWindow = useCallback((roomId: string, width: number, height: number) => {
-    const area = width * height;
-    const newWindow: Window = { id: generateId(), width, height, area };
+  const addCeiling = useCallback((roomId: string, area: number) => {
+    const newCeiling: Ceiling = { id: generateId(), area };
     
     setRooms(prev => prev.map(room => {
       if (room.id !== roomId) return room;
-      const windows = [...room.windows, newWindow];
-      const totalWindowArea = windows.reduce((sum, w) => sum + w.area, 0);
-      const netArea = room.totalWallArea - totalWindowArea;
-      return { ...room, windows, totalWindowArea, netArea };
+      const ceilings = [...room.ceilings, newCeiling];
+      const totalCeilingArea = ceilings.reduce((sum, c) => sum + c.area, 0);
+      const netArea = room.totalWallArea + totalCeilingArea;
+      return { ...room, ceilings, totalCeilingArea, netArea };
     }));
   }, []);
 
-  const deleteWindow = useCallback((roomId: string, windowId: string) => {
+  const deleteCeiling = useCallback((roomId: string, ceilingId: string) => {
     setRooms(prev => prev.map(room => {
       if (room.id !== roomId) return room;
-      const windows = room.windows.filter(w => w.id !== windowId);
-      const totalWindowArea = windows.reduce((sum, w) => sum + w.area, 0);
-      const netArea = room.totalWallArea - totalWindowArea;
-      return { ...room, windows, totalWindowArea, netArea };
+      const ceilings = room.ceilings.filter(c => c.id !== ceilingId);
+      const totalCeilingArea = ceilings.reduce((sum, c) => sum + c.area, 0);
+      const netArea = room.totalWallArea + totalCeilingArea;
+      return { ...room, ceilings, totalCeilingArea, netArea };
     }));
   }, []);
 
@@ -101,6 +99,30 @@ export const useCalculator = () => {
       const workTypes = room.workTypes.map(wt => 
         wt.id === workTypeId ? { ...wt, enabled: !wt.enabled } : wt
       );
+      return { ...room, workTypes };
+    }));
+  }, []);
+
+  const addCustomWorkType = useCallback((roomId: string, name: string, unit: WorkTypeUnit, price: number) => {
+    const newWorkType: WorkType = {
+      id: generateId(),
+      name,
+      pricePerMeter: price,
+      enabled: true,
+      unit,
+      isCustom: true,
+    };
+    
+    setRooms(prev => prev.map(room => {
+      if (room.id !== roomId) return room;
+      return { ...room, workTypes: [...room.workTypes, newWorkType] };
+    }));
+  }, []);
+
+  const deleteWorkType = useCallback((roomId: string, workTypeId: string) => {
+    setRooms(prev => prev.map(room => {
+      if (room.id !== roomId) return room;
+      const workTypes = room.workTypes.filter(wt => wt.id !== workTypeId);
       return { ...room, workTypes };
     }));
   }, []);
@@ -179,7 +201,8 @@ export const useCalculator = () => {
       if (workType.name.includes('Narożniki')) return room.totalCorners;
       if (workType.name.includes('bruzd')) return room.totalGrooves;
       if (workType.name.includes('Akrylowanie')) return room.totalAcrylic;
-      return 0;
+      // For custom mb work types, return sum of all linear items
+      return room.totalCorners + room.totalGrooves + room.totalAcrylic;
     }
   }, []);
 
@@ -210,8 +233,8 @@ export const useCalculator = () => {
     deleteRoom,
     addWall,
     deleteWall,
-    addWindow,
-    deleteWindow,
+    addCeiling,
+    deleteCeiling,
     addCorner,
     deleteCorner,
     addGroove,
@@ -221,6 +244,8 @@ export const useCalculator = () => {
     setFloorProtection,
     updateWorkTypePrice,
     toggleWorkType,
+    addCustomWorkType,
+    deleteWorkType,
     calculateRoomTotal,
     calculateGrandTotal,
     calculateGrossTotal,

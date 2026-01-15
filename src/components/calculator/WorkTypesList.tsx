@@ -1,18 +1,29 @@
 import { motion } from 'framer-motion';
-import { WorkType } from '@/types/calculator';
+import { WorkType, WorkTypeUnit } from '@/types/calculator';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
+import { CustomWorkTypeInput } from './CustomWorkTypeInput';
+import { Trash2 } from 'lucide-react';
 
 interface WorkTypesListProps {
   workTypes: WorkType[];
   getQuantity: (workType: WorkType) => number;
   onToggle: (id: string) => void;
   onPriceChange: (id: string, price: number) => void;
+  onAddCustom: (name: string, unit: WorkTypeUnit, price: number) => void;
+  onDelete: (id: string) => void;
 }
 
-export const WorkTypesList = ({ workTypes, getQuantity, onToggle, onPriceChange }: WorkTypesListProps) => {
+export const WorkTypesList = ({ 
+  workTypes, 
+  getQuantity, 
+  onToggle, 
+  onPriceChange, 
+  onAddCustom,
+  onDelete 
+}: WorkTypesListProps) => {
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       {workTypes.map((workType, index) => {
         const quantity = getQuantity(workType);
         const total = workType.enabled ? quantity * workType.pricePerMeter : 0;
@@ -43,6 +54,9 @@ export const WorkTypesList = ({ workTypes, getQuantity, onToggle, onPriceChange 
                     workType.enabled ? 'text-foreground' : 'text-muted-foreground'
                   }`}>
                     {workType.name}
+                    {workType.isCustom && (
+                      <span className="ml-2 text-xs text-accent">(własna)</span>
+                    )}
                   </span>
                   {workType.enabled && quantity > 0 && (
                     <motion.span
@@ -62,8 +76,9 @@ export const WorkTypesList = ({ workTypes, getQuantity, onToggle, onPriceChange 
                     type="number"
                     step="0.01"
                     min="0"
-                    value={workType.pricePerMeter}
+                    value={workType.pricePerMeter || ''}
                     onChange={(e) => onPriceChange(workType.id, parseFloat(e.target.value) || 0)}
+                    placeholder="0"
                     className="w-20 h-10 text-center rounded-xl"
                   />
                   <span className="text-xs text-muted-foreground whitespace-nowrap">
@@ -83,11 +98,26 @@ export const WorkTypesList = ({ workTypes, getQuantity, onToggle, onPriceChange 
                     </span>
                   </motion.div>
                 )}
+
+                {workType.isCustom && (
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => onDelete(workType.id)}
+                    className="p-2 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </motion.button>
+                )}
               </div>
             </div>
           </motion.div>
         );
       })}
+      
+      <div className="mt-4">
+        <CustomWorkTypeInput onAdd={onAddCustom} />
+      </div>
     </div>
   );
 };
