@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, FileDown, Sparkles, User as UserIcon, Check, Volume2, VolumeX } from 'lucide-react';
+import { Plus, FileDown, Sparkles, User as UserIcon, Check, Volume2, VolumeX, Save, FolderOpen } from 'lucide-react';
 import { useCalculator } from '@/hooks/useCalculator';
 import { useAuth } from '@/hooks/useAuth';
+import { useQuotes } from '@/hooks/useQuotes';
 import { useSounds } from '@/contexts/SoundContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,6 +11,10 @@ import { RoomCard } from './RoomCard';
 import { exportToPdf } from '@/utils/pdfExport';
 import { UserMenu } from '@/components/UserMenu';
 import { AnimatedBackground } from './AnimatedBackground';
+import { SaveQuoteDialog } from './SaveQuoteDialog';
+import { QuotesManager } from './QuotesManager';
+import { SavedQuote } from '@/types/quote';
+
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -43,6 +48,9 @@ export const Calculator = () => {
     setPreparedBy,
     isProfileNameConfirmed,
     confirmProfileName,
+    currentQuoteId,
+    currentQuoteName,
+    loadQuoteData,
     createRoom,
     updateRoomName,
     deleteRoom,
@@ -69,14 +77,18 @@ export const Calculator = () => {
     getWorkTypeQuantity,
   } = useCalculator();
 
-  const { authMode, getDisplayName, profile } = useAuth();
+  const { authMode, getDisplayName, user } = useAuth();
   const { playSound, isMuted, toggleMute } = useSounds();
+  const { saveQuote, updateQuote, isLoading: isSavingQuote } = useQuotes();
+  
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
 
   const grandTotal = calculateGrandTotal();
   const grossTotal = calculateGrossTotal();
 
   const profileDisplayName = getDisplayName();
   const showConfirmButton = authMode === 'authenticated' && profileDisplayName && !isProfileNameConfirmed;
+  const isLoggedIn = authMode === 'authenticated' && user;
 
   const handleCreateRoom = () => {
     playSound('success');
@@ -88,7 +100,57 @@ export const Calculator = () => {
     deleteRoom(roomId);
   };
 
-  const handleExportPdf = () => {
+  const handleExportClick = () => {
+    if (isLoggedIn && rooms.length > 0) {
+      setShowSaveDialog(true);
+    } else {
+      // Guest mode - just export PDF
+      handleDownloadOnly(`Wycena ${new Date().toLocaleDateString('pl-PL')}`);
+    }
+  };
+
+  const handleSaveToCloud = async (name: string) => {
+    playSound('celebrate');
+    
+    if (currentQuoteId) {
+      // Update existing quote
+      const success = await updateQuote(currentQuoteId, name, rooms, vatRate, preparedBy);
+      if (success) {
+        // Also download PDF
+        exportToPdf({
+          rooms,
+          vatRate,
+          calculateRoomTotal,
+          getWorkTypeQuantity,
+          grandTotal,
+          grossTotal,
+          preparedBy,
+          quoteName: name,
+        });
+        setShowSaveDialog(false);
+      }
+    } else {
+      // Create new quote
+      const savedQuote = await saveQuote(name, rooms, vatRate, preparedBy);
+      if (savedQuote) {
+        loadQuoteData(savedQuote.id, savedQuote.name, rooms, vatRate, preparedBy);
+        // Also download PDF
+        exportToPdf({
+          rooms,
+          vatRate,
+          calculateRoomTotal,
+          getWorkTypeQuantity,
+          grandTotal,
+          grossTotal,
+          preparedBy,
+          quoteName: name,
+        });
+        setShowSaveDialog(false);
+      }
+    }
+  };
+
+  const handleDownloadOnly = (name: string) => {
     playSound('celebrate');
     exportToPdf({
       rooms,
@@ -98,7 +160,12 @@ export const Calculator = () => {
       grandTotal,
       grossTotal,
       preparedBy,
+      quoteName: name,
     });
+  };
+
+  const handleLoadQuote = (quote: SavedQuote) => {
+    loadQuoteData(quote.id, quote.name, quote.data, quote.vat_rate, quote.prepared_by);
   };
 
   return (
@@ -114,6 +181,13 @@ export const Calculator = () => {
       >
         {/* User Menu & Sound Toggle */}
         <motion.div variants={itemVariants} className="flex justify-end items-center gap-2 mb-4">
+          {isLoggedIn && (
+            <QuotesManager
+              onLoadQuote={handleLoadQuote}
+              getWorkTypeQuantity={getWorkTypeQuantity}
+              calculateRoomTotal={calculateRoomTotal}
+            />
+          )}
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -141,6 +215,12 @@ export const Calculator = () => {
               </span>
             </h1>
           </div>
+          {currentQuoteName && (
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-medium mb-2">
+              <FolderOpen className="h-3 w-3" />
+              {currentQuoteName}
+            </div>
+          )}
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
             <Sparkles className="h-3 w-3" />
             Wszystkie ceny netto
@@ -366,13 +446,22 @@ export const Calculator = () => {
                 whileTap={{ scale: 0.99 }}
               >
                 <Button
-                  onClick={handleExportPdf}
+                  onClick={handleExportClick}
                   size="lg"
                   variant="outline"
                   className="w-full h-14 gap-3 rounded-2xl text-base font-medium border-2 hover:bg-muted/50 transition-all duration-300"
                 >
-                  <FileDown className="h-5 w-5" />
-                  Pobierz wycenę PDF
+                  {isLoggedIn ? (
+                    <>
+                      <Save className="h-5 w-5" />
+                      {currentQuoteId ? 'Zapisz zmiany i pobierz PDF' : 'Zapisz wycenę i pobierz PDF'}
+                    </>
+                  ) : (
+                    <>
+                      <FileDown className="h-5 w-5" />
+                      Pobierz wycenę PDF
+                    </>
+                  )}
                 </Button>
               </motion.div>
             </div>
@@ -392,6 +481,16 @@ export const Calculator = () => {
           </p>
         </motion.footer>
       </motion.div>
+
+      {/* Save Quote Dialog */}
+      <SaveQuoteDialog
+        isOpen={showSaveDialog}
+        onClose={() => setShowSaveDialog(false)}
+        onSaveToCloud={handleSaveToCloud}
+        onDownloadOnly={handleDownloadOnly}
+        isLoading={isSavingQuote}
+        defaultName={currentQuoteName || undefined}
+      />
     </div>
   );
 };
