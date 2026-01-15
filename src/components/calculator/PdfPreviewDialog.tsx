@@ -79,7 +79,7 @@ export const PdfPreviewDialog = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
-              src={pdfUrl}
+              src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=1`}
               className="w-full h-full border-0"
               title="PDF Preview"
             />
