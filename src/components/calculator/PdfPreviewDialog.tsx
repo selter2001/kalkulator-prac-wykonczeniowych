@@ -79,25 +79,16 @@ export const PdfPreviewDialog = ({
           </div>
         </DialogHeader>
 
-        <div className="flex-1 overflow-hidden bg-muted/30 min-h-0">
+        <div className="flex-1 overflow-hidden min-h-0">
           {pdfUrl ? (
-            <motion.object
+            <motion.embed
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
-              data={pdfUrl}
+              src={`${pdfUrl}#view=FitH&toolbar=0&navpanes=0`}
               type="application/pdf"
               className="w-full h-full"
-            >
-              <div className="flex items-center justify-center h-full p-8 text-center">
-                <p className="text-muted-foreground">
-                  Twoja przeglądarka nie obsługuje podglądu PDF.{' '}
-                  <button onClick={onDownload} className="text-primary underline">
-                    Pobierz plik
-                  </button>
-                </p>
-              </div>
-            </motion.object>
+            />
           ) : (
             <div className="flex items-center justify-center h-full">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
