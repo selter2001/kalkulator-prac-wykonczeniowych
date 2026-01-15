@@ -26,10 +26,10 @@ export const LinearInput = ({ onAdd, label, icon, placeholder = "Długość (m)"
     <motion.div 
       initial={{ opacity: 0, y: 5 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex items-center gap-3 p-4 rounded-2xl bg-muted/30 border border-border/50"
+      className="flex flex-wrap items-center gap-3 p-4 rounded-2xl bg-muted/30 border border-border/50"
     >
       {icon}
-      <div className="flex items-center gap-3 flex-1">
+      <div className="flex items-center gap-3">
         <Input
           type="number"
           step="0.01"
