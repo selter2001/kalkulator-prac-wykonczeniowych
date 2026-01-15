@@ -11,9 +11,10 @@ import { User, UserPlus, ArrowRight, Mail, Lock, ArrowLeft, Building2, UserCircl
 import { z } from 'zod';
 import { AnimatedBackground } from '@/components/calculator/AnimatedBackground';
 
-const emailSchema = z.string().email('Nieprawidłowy adres email');
+const emailSchema = z.string().email('Nieprawidłowy adres email').max(255, 'Email nie może przekraczać 255 znaków');
 const passwordSchema = z.string().min(6, 'Hasło musi mieć minimum 6 znaków');
-const fullNameSchema = z.string().min(2, 'Imię i nazwisko musi mieć minimum 2 znaki');
+const fullNameSchema = z.string().min(2, 'Imię i nazwisko musi mieć minimum 2 znaki').max(200, 'Imię i nazwisko nie może przekraczać 200 znaków');
+const companyNameSchema = z.string().max(200, 'Nazwa firmy nie może przekraczać 200 znaków').optional();
 
 type AuthView = 'selection' | 'login' | 'register' | 'forgot-password';
 
