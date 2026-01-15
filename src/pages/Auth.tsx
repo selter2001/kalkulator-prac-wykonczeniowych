@@ -26,7 +26,7 @@ const Auth = () => {
   const [fullName, setFullName] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string; confirmPassword?: string; fullName?: string }>({});
+  const [errors, setErrors] = useState<{ email?: string; password?: string; confirmPassword?: string; fullName?: string; companyName?: string }>({});
   
   const { signIn, signUp, continueAsGuest, resetPassword } = useAuth();
   const { toast } = useToast();
@@ -63,6 +63,16 @@ const Auth = () => {
       } catch (e) {
         if (e instanceof z.ZodError) {
           newErrors.fullName = e.errors[0].message;
+        }
+      }
+      
+      if (companyName) {
+        try {
+          companyNameSchema.parse(companyName);
+        } catch (e) {
+          if (e instanceof z.ZodError) {
+            newErrors.companyName = e.errors[0].message;
+          }
         }
       }
     }
@@ -411,10 +421,12 @@ const Auth = () => {
                             type="text"
                             placeholder="np. Firma Budowlana XYZ"
                             value={companyName}
-                            onChange={(e) => setCompanyName(e.target.value)}
-                            className="pl-10 h-11 rounded-xl bg-muted/30 border-border/50"
+                            onChange={(e) => { setCompanyName(e.target.value); setErrors(prev => ({ ...prev, companyName: undefined })); }}
+                            className={`pl-10 h-11 rounded-xl bg-muted/30 border-border/50 ${errors.companyName ? 'border-destructive' : ''}`}
+                            maxLength={200}
                           />
                         </div>
+                        {errors.companyName && <p className="text-sm text-destructive">{errors.companyName}</p>}
                         <p className="text-xs text-muted-foreground">
                           Jeśli podasz nazwę firmy, będzie ona wyświetlana na wycenach.
                         </p>
