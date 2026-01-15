@@ -16,9 +16,9 @@ export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  // Guest mode uses sessionStorage - cleared on browser close/refresh
   const [authMode, setAuthMode] = useState<AuthMode>(() => {
-    // Initialize from localStorage so AuthGuard doesn't redirect before state updates
-    return localStorage.getItem('guestMode') === 'true' ? 'guest' : null;
+    return sessionStorage.getItem('guestMode') === 'true' ? 'guest' : null;
   });
   const [loading, setLoading] = useState(true);
 
@@ -43,15 +43,15 @@ export const useAuth = () => {
         
         if (session?.user) {
           setAuthMode('authenticated');
-          localStorage.removeItem('guestMode');
+          sessionStorage.removeItem('guestMode');
           // Defer profile fetch to avoid deadlock
           setTimeout(() => {
             fetchProfile(session.user.id);
           }, 0);
         } else {
           setProfile(null);
-          // Respect guest mode across components (avoids redirect loop in AuthGuard)
-          const isGuest = localStorage.getItem('guestMode') === 'true';
+          // Check session storage for guest mode
+          const isGuest = sessionStorage.getItem('guestMode') === 'true';
           setAuthMode(isGuest ? 'guest' : null);
         }
         setLoading(false);
@@ -67,8 +67,8 @@ export const useAuth = () => {
         setAuthMode('authenticated');
         fetchProfile(session.user.id);
       } else {
-        // Check if guest mode was previously set
-        const isGuest = localStorage.getItem('guestMode') === 'true';
+        // Check if guest mode was set in this session
+        const isGuest = sessionStorage.getItem('guestMode') === 'true';
         if (isGuest) {
           setAuthMode('guest');
         }
@@ -111,18 +111,18 @@ export const useAuth = () => {
     if (!error) {
       setAuthMode(null);
       setProfile(null);
-      localStorage.removeItem('guestMode');
+      sessionStorage.removeItem('guestMode');
     }
     return { error };
   };
 
   const continueAsGuest = () => {
-    localStorage.setItem('guestMode', 'true');
+    sessionStorage.setItem('guestMode', 'true');
     setAuthMode('guest');
   };
 
   const exitGuestMode = () => {
-    localStorage.removeItem('guestMode');
+    sessionStorage.removeItem('guestMode');
     setAuthMode(null);
   };
 
