@@ -1,6 +1,8 @@
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, FileDown, Sparkles, User as UserIcon } from 'lucide-react';
+import { Plus, FileDown, Sparkles, User as UserIcon, Check } from 'lucide-react';
 import { useCalculator } from '@/hooks/useCalculator';
+import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { RoomCard } from './RoomCard';
@@ -38,6 +40,8 @@ export const Calculator = () => {
     setVatRate,
     preparedBy,
     setPreparedBy,
+    isProfileNameConfirmed,
+    confirmProfileName,
     createRoom,
     updateRoomName,
     deleteRoom,
@@ -64,8 +68,13 @@ export const Calculator = () => {
     getWorkTypeQuantity,
   } = useCalculator();
 
+  const { authMode, getDisplayName, profile } = useAuth();
+
   const grandTotal = calculateGrandTotal();
   const grossTotal = calculateGrossTotal();
+
+  const profileDisplayName = getDisplayName();
+  const showConfirmButton = authMode === 'authenticated' && profileDisplayName && !isProfileNameConfirmed;
 
   return (
     <div className="min-h-screen bg-background">
@@ -123,13 +132,46 @@ export const Calculator = () => {
               </div>
               <div className="flex-1">
                 <label className="text-xs text-muted-foreground mb-1 block">Wycenę przygotował/a</label>
-                <Input
-                  type="text"
-                  value={preparedBy}
-                  onChange={(e) => setPreparedBy(e.target.value)}
-                  placeholder="Nazwa firmy lub imię i nazwisko"
-                  className="h-10 rounded-xl border-0 bg-muted/30 focus:bg-muted/50"
-                />
+                <div className="flex gap-2">
+                  <Input
+                    type="text"
+                    value={preparedBy}
+                    onChange={(e) => setPreparedBy(e.target.value)}
+                    placeholder="Nazwa firmy lub imię i nazwisko"
+                    className="h-10 rounded-xl border-0 bg-muted/30 focus:bg-muted/50 flex-1"
+                  />
+                  {showConfirmButton && (
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={confirmProfileName}
+                      className="h-10 px-3 rounded-xl gap-1.5 text-xs"
+                      title={`Użyj: ${profileDisplayName}`}
+                    >
+                      <Check className="h-4 w-4" />
+                      <span className="hidden sm:inline">Potwierdź</span>
+                    </Button>
+                  )}
+                </div>
+                {authMode === 'authenticated' && profileDisplayName && (
+                  <p className="text-xs text-muted-foreground mt-1.5">
+                    {isProfileNameConfirmed ? (
+                      <span className="text-green-600 dark:text-green-500">
+                        ✓ Używasz danych z profilu: {profileDisplayName}
+                      </span>
+                    ) : (
+                      <>
+                        Kliknij "Potwierdź" aby użyć: <span className="font-medium">{profileDisplayName}</span>
+                      </>
+                    )}
+                  </p>
+                )}
+                {authMode === 'guest' && (
+                  <p className="text-xs text-muted-foreground mt-1.5">
+                    Tryb gościa - wprowadź dane ręcznie
+                  </p>
+                )}
               </div>
             </div>
           </div>

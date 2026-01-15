@@ -1,5 +1,6 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Room, Wall, Ceiling, WorkType, LinearItem, defaultWorkTypes, VatRate, WorkTypeUnit, CustomItem } from '@/types/calculator';
+import { useAuth } from './useAuth';
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
 
@@ -7,6 +8,27 @@ export const useCalculator = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [vatRate, setVatRate] = useState<VatRate>(23);
   const [preparedBy, setPreparedBy] = useState<string>('');
+  const [isProfileNameConfirmed, setIsProfileNameConfirmed] = useState(false);
+  
+  const { profile, authMode, getDisplayName } = useAuth();
+
+  // Auto-fill preparedBy from profile when user is authenticated
+  useEffect(() => {
+    if (authMode === 'authenticated' && profile && !isProfileNameConfirmed) {
+      const displayName = getDisplayName();
+      if (displayName && preparedBy === '') {
+        setPreparedBy(displayName);
+      }
+    }
+  }, [authMode, profile, getDisplayName, isProfileNameConfirmed, preparedBy]);
+
+  const confirmProfileName = useCallback(() => {
+    const displayName = getDisplayName();
+    if (displayName) {
+      setPreparedBy(displayName);
+      setIsProfileNameConfirmed(true);
+    }
+  }, [getDisplayName]);
 
   const createRoom = useCallback((name: string = 'Nowy pokój') => {
     const newRoom: Room = {
@@ -230,7 +252,7 @@ export const useCalculator = () => {
       return room.netArea;
     } else {
       // mb - metry bieżące
-      if (workType.name.includes('Narożniki')) return room.totalCorners;
+      if (workType.name.includes('Narożniki') || workType.name.includes('Narozniki')) return room.totalCorners;
       if (workType.name.includes('bruzd')) return room.totalGrooves;
       if (workType.name.includes('Akrylowanie')) return room.totalAcrylic;
       return 0;
@@ -261,6 +283,8 @@ export const useCalculator = () => {
     setVatRate,
     preparedBy,
     setPreparedBy,
+    isProfileNameConfirmed,
+    confirmProfileName,
     createRoom,
     updateRoomName,
     deleteRoom,
