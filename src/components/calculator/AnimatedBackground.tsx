@@ -1,14 +1,13 @@
 import { motion } from 'framer-motion';
 
 // Animated cartoon construction worker with paint roller
-const PaintWorker = ({ delay = 0, scale = 1, className = "" }: { delay?: number; scale?: number; className?: string }) => (
+const PaintWorker = ({ delay = 0, className = "" }: { delay?: number; className?: string }) => (
   <motion.svg
     viewBox="0 0 160 140"
     className={className}
     initial={{ opacity: 0, x: -20 }}
     animate={{ opacity: 1, x: 0 }}
     transition={{ delay, duration: 1 }}
-    style={{ transform: `scale(${scale})` }}
   >
     {/* Body - blue overalls */}
     <motion.ellipse cx="50" cy="80" rx="20" ry="28" fill="#3B82F6" />
@@ -56,11 +55,11 @@ const PaintBucket = ({ delay = 0, color = "#3B82F6", className = "" }: { delay?:
     initial={{ opacity: 0, y: 20 }}
     animate={{ 
       opacity: 1, 
-      y: [0, -15, 0],
+      y: [0, -10, 0],
     }}
     transition={{ 
       opacity: { delay, duration: 0.5 },
-      y: { delay, duration: 3, repeat: Infinity, ease: "easeInOut" }
+      y: { delay, duration: 4, repeat: Infinity, ease: "easeInOut" }
     }}
   >
     {/* Bucket body */}
@@ -83,49 +82,6 @@ const PaintBucket = ({ delay = 0, color = "#3B82F6", className = "" }: { delay?:
   </motion.svg>
 );
 
-// Drywall/gypsum board worker
-const DrywallWorker = ({ delay = 0, className = "" }: { delay?: number; className?: string }) => (
-  <motion.svg
-    viewBox="0 0 180 120"
-    className={className}
-    initial={{ opacity: 0, scale: 0.8 }}
-    animate={{ opacity: 1, scale: 1 }}
-    transition={{ delay, duration: 0.5 }}
-  >
-    {/* Drywall panel */}
-    <motion.rect
-      x="0"
-      y="20"
-      width="120"
-      height="80"
-      rx="4"
-      fill="#E5E7EB"
-      stroke="#9CA3AF"
-      strokeWidth="2"
-      animate={{ rotate: [-2, 2, -2] }}
-      transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-      style={{ transformOrigin: "60px 60px" }}
-    />
-    {/* Screw marks */}
-    <circle cx="20" cy="40" r="3" fill="#6B7280" />
-    <circle cx="60" cy="40" r="3" fill="#6B7280" />
-    <circle cx="100" cy="40" r="3" fill="#6B7280" />
-    <circle cx="20" cy="80" r="3" fill="#6B7280" />
-    <circle cx="60" cy="80" r="3" fill="#6B7280" />
-    <circle cx="100" cy="80" r="3" fill="#6B7280" />
-    
-    {/* Worker behind the panel */}
-    <motion.circle cx="140" cy="50" r="16" fill="#FBBF24" />
-    <motion.ellipse cx="140" cy="36" rx="18" ry="6" fill="#EF4444" />
-    <motion.rect x="122" y="32" width="36" height="6" fill="#EF4444" rx="2" />
-    <circle cx="135" cy="48" r="2" fill="#1F2937" />
-    <circle cx="145" cy="48" r="2" fill="#1F2937" />
-    <motion.ellipse cx="145" cy="90" rx="18" ry="24" fill="#10B981" />
-    <motion.line x1="127" y1="75" x2="120" y2="55" stroke="#FBBF24" strokeWidth="7" strokeLinecap="round" />
-    <motion.line x1="163" y1="75" x2="120" y2="75" stroke="#FBBF24" strokeWidth="7" strokeLinecap="round" />
-  </motion.svg>
-);
-
 // Paintbrush
 const Paintbrush = ({ delay = 0, rotate = 0, className = "" }: { delay?: number; rotate?: number; className?: string }) => (
   <motion.svg
@@ -134,11 +90,11 @@ const Paintbrush = ({ delay = 0, rotate = 0, className = "" }: { delay?: number;
     initial={{ opacity: 0, rotate: rotate - 30 }}
     animate={{ 
       opacity: 1,
-      rotate: [rotate, rotate + 15, rotate]
+      rotate: [rotate, rotate + 10, rotate]
     }}
     transition={{ 
       opacity: { delay, duration: 0.5 },
-      rotate: { delay, duration: 2, repeat: Infinity, ease: "easeInOut" }
+      rotate: { delay, duration: 3, repeat: Infinity, ease: "easeInOut" }
     }}
   >
     {/* Handle */}
@@ -172,8 +128,8 @@ const MeasuringTape = ({ delay = 0, className = "" }: { delay?: number; classNam
       width="80"
       height="16"
       fill="#FEF3C7"
-      animate={{ width: [80, 120, 80] }}
-      transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      animate={{ width: [80, 110, 80] }}
+      transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
     />
     {/* Tape markings */}
     {[0, 20, 40, 60, 80].map((offset, i) => (
@@ -194,8 +150,8 @@ const MeasuringTape = ({ delay = 0, className = "" }: { delay?: number; classNam
       width="8"
       height="24"
       fill="#EF4444"
-      animate={{ x: [138, 178, 138] }}
-      transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      animate={{ x: [138, 168, 138] }}
+      transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
     />
   </motion.svg>
 );
@@ -208,11 +164,11 @@ const Trowel = ({ delay = 0, rotate = 0, className = "" }: { delay?: number; rot
     initial={{ opacity: 0 }}
     animate={{ 
       opacity: 1,
-      rotate: [rotate, rotate + 20, rotate]
+      rotate: [rotate, rotate + 15, rotate]
     }}
     transition={{ 
       opacity: { delay, duration: 0.5 },
-      rotate: { delay: delay + 0.5, duration: 1.5, repeat: Infinity, ease: "easeInOut" }
+      rotate: { delay: delay + 0.5, duration: 2, repeat: Infinity, ease: "easeInOut" }
     }}
   >
     {/* Handle */}
@@ -224,28 +180,27 @@ const Trowel = ({ delay = 0, rotate = 0, className = "" }: { delay?: number; rot
   </motion.svg>
 );
 
-// Floating paint drops - responsive
+// Subtle floating paint drops
 const PaintDrops = () => (
   <div className="absolute inset-0 overflow-hidden pointer-events-none">
     {[
-      { left: "5%", delay: 0, color: "#3B82F6", size: "w-3 h-3 md:w-4 md:h-4" },
-      { left: "15%", delay: 1.5, color: "#10B981", size: "w-2 h-2 md:w-3 md:h-3" },
-      { left: "30%", delay: 0.8, color: "#F59E0B", size: "w-4 h-4 md:w-5 md:h-5" },
-      { left: "50%", delay: 2, color: "#EF4444", size: "w-3 h-3 md:w-4 md:h-4" },
-      { left: "70%", delay: 0.5, color: "#8B5CF6", size: "w-3 h-3 md:w-4 md:h-4" },
-      { left: "85%", delay: 1.2, color: "#3B82F6", size: "w-2 h-2 md:w-3 md:h-3" },
-      { left: "95%", delay: 1.8, color: "#10B981", size: "w-2 h-2 md:w-3 md:h-3" },
+      { left: "8%", delay: 0, color: "#3B82F6" },
+      { left: "25%", delay: 2, color: "#10B981" },
+      { left: "45%", delay: 1, color: "#F59E0B" },
+      { left: "65%", delay: 3, color: "#EF4444" },
+      { left: "82%", delay: 1.5, color: "#8B5CF6" },
+      { left: "92%", delay: 2.5, color: "#3B82F6" },
     ].map((drop, i) => (
       <motion.div
         key={i}
-        className={`absolute rounded-full ${drop.size}`}
+        className="absolute w-2 h-2 md:w-3 md:h-3 rounded-full"
         style={{ left: drop.left, top: "-20px", backgroundColor: drop.color }}
         animate={{
           y: [0, typeof window !== 'undefined' ? window.innerHeight + 40 : 1000, 0],
-          opacity: [0, 1, 1, 0],
+          opacity: [0, 0.6, 0.6, 0],
         }}
         transition={{
-          duration: 6,
+          duration: 8,
           repeat: Infinity,
           delay: drop.delay,
           ease: "easeIn",
@@ -257,141 +212,104 @@ const PaintDrops = () => (
 
 export const AnimatedBackground = () => {
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden">
+    <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
       {/* Base gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-background to-amber-50 dark:from-blue-950/20 dark:via-background dark:to-amber-950/20" />
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-background to-amber-50/50 dark:from-blue-950/10 dark:via-background dark:to-amber-950/10" />
       
-      {/* Soft glow effects */}
+      {/* Soft glow effects - very subtle */}
       <motion.div 
-        className="absolute top-10 right-5 md:top-20 md:right-20 w-[200px] h-[200px] md:w-[400px] md:h-[400px] bg-blue-400/20 rounded-full blur-[60px] md:blur-[100px]"
-        animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.3, 0.2] }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute -top-20 -right-20 w-[250px] h-[250px] md:w-[400px] md:h-[400px] bg-blue-400/10 rounded-full blur-[80px] md:blur-[120px]"
+        animate={{ scale: [1, 1.1, 1], opacity: [0.1, 0.15, 0.1] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div 
-        className="absolute bottom-10 left-5 md:bottom-20 md:left-20 w-[180px] h-[180px] md:w-[350px] md:h-[350px] bg-amber-400/20 rounded-full blur-[50px] md:blur-[80px]"
-        animate={{ scale: [1, 1.15, 1], opacity: [0.2, 0.25, 0.2] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+        className="absolute -bottom-20 -left-20 w-[200px] h-[200px] md:w-[350px] md:h-[350px] bg-amber-400/10 rounded-full blur-[60px] md:blur-[100px]"
+        animate={{ scale: [1, 1.1, 1], opacity: [0.1, 0.12, 0.1] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
       />
 
-      {/* Paint drops falling */}
+      {/* Paint drops falling - subtle */}
       <PaintDrops />
 
-      {/* === MOBILE ELEMENTS (visible on small screens) === */}
+      {/* === MOBILE ELEMENTS - subtle, at edges only === */}
       <div className="block md:hidden">
-        {/* Top left - Paint worker */}
+        {/* Top left corner - small worker peeking */}
         <PaintWorker 
           delay={0.2} 
-          className="absolute top-20 -left-4 w-28 h-28 opacity-70"
+          className="absolute -top-2 -left-10 w-20 h-20 opacity-25"
         />
         
-        {/* Top right - Paint bucket */}
+        {/* Top right corner - small bucket */}
         <PaintBucket 
-          delay={0.4} 
-          color="#10B981" 
-          className="absolute top-32 -right-2 w-20 h-20 opacity-70"
-        />
-        
-        {/* Middle left - Paintbrush */}
-        <Paintbrush 
-          delay={0.6} 
-          rotate={-20}
-          className="absolute top-1/3 -left-6 w-24 h-16 opacity-60"
-        />
-        
-        {/* Middle right - Trowel */}
-        <Trowel 
           delay={0.5} 
-          rotate={15}
-          className="absolute top-1/2 -right-3 w-16 h-24 opacity-60"
+          color="#10B981" 
+          className="absolute top-16 -right-6 w-14 h-14 opacity-20"
         />
         
-        {/* Bottom left - Measuring tape */}
-        <MeasuringTape 
-          delay={0.7}
-          className="absolute bottom-40 -left-8 w-32 h-14 opacity-60"
+        {/* Bottom left - paintbrush */}
+        <Paintbrush 
+          delay={0.7} 
+          rotate={-30}
+          className="absolute bottom-32 -left-12 w-20 h-10 opacity-20"
         />
         
-        {/* Bottom right - Another bucket */}
-        <PaintBucket 
-          delay={0.8} 
-          color="#8B5CF6" 
-          className="absolute bottom-28 -right-4 w-18 h-18 opacity-60"
-        />
-        
-        {/* Very bottom - Drywall worker (smaller) */}
-        <DrywallWorker 
-          delay={1}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 w-36 h-24 opacity-50"
+        {/* Bottom right - trowel */}
+        <Trowel 
+          delay={0.6} 
+          rotate={20}
+          className="absolute bottom-20 -right-4 w-10 h-16 opacity-20"
         />
       </div>
 
-      {/* === DESKTOP ELEMENTS (visible on medium+ screens) === */}
+      {/* === DESKTOP ELEMENTS === */}
       <div className="hidden md:block">
         {/* Left side - Paint worker */}
         <PaintWorker 
           delay={0.2} 
-          className="absolute top-40 left-4 lg:left-12 w-40 lg:w-52 h-40 lg:h-52 opacity-80"
+          className="absolute top-32 -left-4 lg:left-4 w-32 lg:w-44 h-32 lg:h-44 opacity-40"
         />
         
         {/* Left side - Paint bucket */}
         <PaintBucket 
           delay={0.5} 
           color="#10B981" 
-          className="absolute top-[55%] left-8 lg:left-20 w-28 lg:w-36 h-28 lg:h-36 opacity-75"
+          className="absolute top-[50%] -left-4 lg:left-8 w-20 lg:w-28 h-20 lg:h-28 opacity-30"
         />
         
         {/* Left bottom - Trowel */}
         <Trowel 
           delay={0.7} 
-          rotate={-10}
-          className="absolute bottom-32 left-4 lg:left-16 w-20 lg:w-24 h-28 lg:h-36 opacity-70"
-        />
-        
-        {/* Right side - Drywall worker */}
-        <DrywallWorker 
-          delay={0.4}
-          className="absolute top-32 right-4 lg:right-12 w-44 lg:w-56 h-32 lg:h-40 opacity-80"
+          rotate={-15}
+          className="absolute bottom-24 -left-2 lg:left-6 w-14 lg:w-20 h-20 lg:h-28 opacity-30"
         />
         
         {/* Right side - Paintbrush */}
         <Paintbrush 
           delay={0.3} 
-          rotate={-25}
-          className="absolute top-[45%] right-8 lg:right-16 w-32 lg:w-40 h-16 lg:h-20 opacity-75"
+          rotate={-20}
+          className="absolute top-40 -right-8 lg:right-4 w-28 lg:w-36 h-12 lg:h-16 opacity-35"
         />
         
         {/* Right side - Measuring tape */}
         <MeasuringTape 
           delay={0.6}
-          className="absolute top-[60%] right-4 lg:right-20 w-40 lg:w-52 h-16 lg:h-20 opacity-70"
+          className="absolute top-[55%] -right-12 lg:right-0 w-36 lg:w-44 h-14 lg:h-18 opacity-30"
         />
         
         {/* Right bottom - Paint bucket */}
         <PaintBucket 
           delay={0.8} 
           color="#8B5CF6" 
-          className="absolute bottom-28 right-8 lg:right-24 w-24 lg:w-32 h-24 lg:h-32 opacity-70"
-        />
-        
-        {/* Top center decorative */}
-        <PaintBucket 
-          delay={1} 
-          color="#F59E0B" 
-          className="absolute top-12 left-1/4 w-20 h-20 opacity-50"
-        />
-        <Paintbrush 
-          delay={1.2} 
-          rotate={45}
-          className="absolute top-8 right-1/3 w-28 h-12 opacity-50"
+          className="absolute bottom-20 -right-6 lg:right-6 w-20 lg:w-26 h-20 lg:h-26 opacity-25"
         />
       </div>
 
-      {/* Subtle dot pattern overlay */}
+      {/* Very subtle dot pattern overlay */}
       <div 
-        className="absolute inset-0 opacity-[0.03]"
+        className="absolute inset-0 opacity-[0.015]"
         style={{
           backgroundImage: `radial-gradient(circle, currentColor 1px, transparent 1px)`,
-          backgroundSize: '40px 40px'
+          backgroundSize: '50px 50px'
         }}
       />
     </div>
