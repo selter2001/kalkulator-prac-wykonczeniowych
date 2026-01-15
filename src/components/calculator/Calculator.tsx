@@ -1,7 +1,8 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, FileDown, Sparkles } from 'lucide-react';
+import { Plus, FileDown, Sparkles, User } from 'lucide-react';
 import { useCalculator } from '@/hooks/useCalculator';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { RoomCard } from './RoomCard';
 import { exportToPdf } from '@/utils/pdfExport';
 
@@ -34,6 +35,8 @@ export const Calculator = () => {
     rooms,
     vatRate,
     setVatRate,
+    preparedBy,
+    setPreparedBy,
     createRoom,
     updateRoomName,
     deleteRoom,
@@ -102,6 +105,27 @@ export const Calculator = () => {
             Profesjonalne wyceny prac wykończeniowych w kilka kliknięć
           </p>
         </motion.header>
+
+        {/* Prepared By Input */}
+        <motion.div variants={itemVariants} className="mb-8">
+          <div className="max-w-md mx-auto p-4 rounded-2xl glass-card border border-border/50">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-primary/10">
+                <User className="h-5 w-5 text-primary" />
+              </div>
+              <div className="flex-1">
+                <label className="text-xs text-muted-foreground mb-1 block">Wycenę przygotował/a</label>
+                <Input
+                  type="text"
+                  value={preparedBy}
+                  onChange={(e) => setPreparedBy(e.target.value)}
+                  placeholder="Nazwa firmy lub imię i nazwisko"
+                  className="h-10 rounded-xl border-0 bg-muted/30 focus:bg-muted/50"
+                />
+              </div>
+            </div>
+          </div>
+        </motion.div>
 
         {/* Add Room Button */}
         <motion.div variants={itemVariants} className="flex justify-center mb-12">
@@ -273,6 +297,7 @@ export const Calculator = () => {
                     getWorkTypeQuantity,
                     grandTotal,
                     grossTotal,
+                    preparedBy,
                   })}
                   size="lg"
                   variant="outline"

@@ -8,6 +8,7 @@ interface ExportData {
   getWorkTypeQuantity: (room: Room, workType: WorkType) => number;
   grandTotal: number;
   grossTotal: number;
+  preparedBy?: string;
 }
 
 export const exportToPdf = ({
@@ -17,6 +18,7 @@ export const exportToPdf = ({
   getWorkTypeQuantity,
   grandTotal,
   grossTotal,
+  preparedBy,
 }: ExportData) => {
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -40,6 +42,11 @@ export const exportToPdf = ({
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(100, 100, 100);
   doc.text(`Data: ${new Date().toLocaleDateString('pl-PL')}`, pageWidth / 2, y, { align: 'center' });
+  
+  if (preparedBy) {
+    y += 6;
+    doc.text(`Przygotował/a: ${preparedBy}`, pageWidth / 2, y, { align: 'center' });
+  }
   
   y += 8;
   doc.setDrawColor(200, 200, 200);

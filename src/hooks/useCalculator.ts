@@ -6,6 +6,7 @@ const generateId = () => Math.random().toString(36).substr(2, 9);
 export const useCalculator = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [vatRate, setVatRate] = useState<VatRate>(23);
+  const [preparedBy, setPreparedBy] = useState<string>('');
 
   const createRoom = useCallback((name: string = 'Nowy pokój') => {
     const newRoom: Room = {
@@ -228,6 +229,8 @@ export const useCalculator = () => {
     rooms,
     vatRate,
     setVatRate,
+    preparedBy,
+    setPreparedBy,
     createRoom,
     updateRoomName,
     deleteRoom,
