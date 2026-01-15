@@ -1,10 +1,11 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, FileDown, Sparkles, User } from 'lucide-react';
+import { Plus, FileDown, Sparkles, User as UserIcon } from 'lucide-react';
 import { useCalculator } from '@/hooks/useCalculator';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { RoomCard } from './RoomCard';
 import { exportToPdf } from '@/utils/pdfExport';
+import { UserMenu } from '@/components/UserMenu';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -81,6 +82,11 @@ export const Calculator = () => {
         animate="visible"
         className="relative z-10 container mx-auto px-4 py-12 max-w-4xl"
       >
+        {/* User Menu */}
+        <motion.div variants={itemVariants} className="flex justify-end mb-4">
+          <UserMenu />
+        </motion.div>
+
         {/* Header */}
         <motion.header variants={itemVariants} className="text-center mb-16">
           <motion.div
@@ -113,7 +119,7 @@ export const Calculator = () => {
           <div className="max-w-md mx-auto p-4 rounded-2xl glass-card border border-border/50">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-xl bg-primary/10">
-                <User className="h-5 w-5 text-primary" />
+                <UserIcon className="h-5 w-5 text-primary" />
               </div>
               <div className="flex-1">
                 <label className="text-xs text-muted-foreground mb-1 block">Wycenę przygotował/a</label>
