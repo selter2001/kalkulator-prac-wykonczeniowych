@@ -48,7 +48,7 @@ export const useCalculator = () => {
       totalAcrylic: 0,
       netArea: 0,
     };
-    setRooms(prev => [...prev, newRoom]);
+    setRooms(prev => [newRoom, ...prev]);
     return newRoom.id;
   }, []);
 
