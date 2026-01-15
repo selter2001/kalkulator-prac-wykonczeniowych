@@ -8,7 +8,7 @@ export interface Ceiling {
   area: number;
 }
 
-export type WorkTypeUnit = 'm2' | 'mb';
+export type WorkTypeUnit = 'm2' | 'mb' | 'szt';
 
 export interface WorkType {
   id: string;

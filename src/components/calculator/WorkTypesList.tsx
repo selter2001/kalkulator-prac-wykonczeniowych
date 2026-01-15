@@ -27,8 +27,8 @@ export const WorkTypesList = ({
       {workTypes.map((workType, index) => {
         const quantity = getQuantity(workType);
         const total = workType.enabled ? quantity * workType.pricePerMeter : 0;
-        const unitLabel = workType.unit === 'm2' ? 'zł/m²' : 'zł/mb';
-        const quantityLabel = workType.unit === 'm2' ? 'm²' : 'mb';
+        const unitLabel = workType.unit === 'm2' ? 'zł/m²' : workType.unit === 'mb' ? 'zł/mb' : 'zł/szt.';
+        const quantityLabel = workType.unit === 'm2' ? 'm²' : workType.unit === 'mb' ? 'mb' : 'szt.';
         
         return (
           <motion.div
