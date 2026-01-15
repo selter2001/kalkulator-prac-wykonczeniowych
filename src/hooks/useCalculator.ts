@@ -112,11 +112,22 @@ export const useCalculator = () => {
       enabled: true,
       unit,
       isCustom: true,
+      customQuantity: 0,
     };
     
     setRooms(prev => prev.map(room => {
       if (room.id !== roomId) return room;
       return { ...room, workTypes: [...room.workTypes, newWorkType] };
+    }));
+  }, []);
+
+  const updateWorkTypeQuantity = useCallback((roomId: string, workTypeId: string, quantity: number) => {
+    setRooms(prev => prev.map(room => {
+      if (room.id !== roomId) return room;
+      const workTypes = room.workTypes.map(wt => 
+        wt.id === workTypeId ? { ...wt, customQuantity: quantity } : wt
+      );
+      return { ...room, workTypes };
     }));
   }, []);
 
@@ -192,6 +203,11 @@ export const useCalculator = () => {
   }, []);
 
   const getWorkTypeQuantity = useCallback((room: Room, workType: WorkType): number => {
+    // Custom work types use their own quantity input
+    if (workType.isCustom) {
+      return workType.customQuantity || 0;
+    }
+    
     if (workType.unit === 'm2') {
       if (workType.name.includes('Oklejanie')) {
         return room.floorProtection;
@@ -202,8 +218,7 @@ export const useCalculator = () => {
       if (workType.name.includes('Narożniki')) return room.totalCorners;
       if (workType.name.includes('bruzd')) return room.totalGrooves;
       if (workType.name.includes('Akrylowanie')) return room.totalAcrylic;
-      // For custom mb work types, return sum of all linear items
-      return room.totalCorners + room.totalGrooves + room.totalAcrylic;
+      return 0;
     }
   }, []);
 
@@ -246,6 +261,7 @@ export const useCalculator = () => {
     deleteAcrylic,
     setFloorProtection,
     updateWorkTypePrice,
+    updateWorkTypeQuantity,
     toggleWorkType,
     addCustomWorkType,
     deleteWorkType,

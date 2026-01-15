@@ -41,6 +41,7 @@ interface RoomCardProps {
   onSetFloorProtection: (area: number) => void;
   onToggleWorkType: (workTypeId: string) => void;
   onUpdateWorkTypePrice: (workTypeId: string, price: number) => void;
+  onUpdateWorkTypeQuantity: (workTypeId: string, quantity: number) => void;
   onAddCustomWorkType: (name: string, unit: WorkTypeUnit, price: number) => void;
   onDeleteWorkType: (workTypeId: string) => void;
   getWorkTypeQuantity: (workType: WorkType) => number;
@@ -95,6 +96,7 @@ export const RoomCard = ({
   onSetFloorProtection,
   onToggleWorkType,
   onUpdateWorkTypePrice,
+  onUpdateWorkTypeQuantity,
   onAddCustomWorkType,
   onDeleteWorkType,
   getWorkTypeQuantity,
@@ -311,6 +313,7 @@ export const RoomCard = ({
                   getQuantity={getWorkTypeQuantity}
                   onToggle={onToggleWorkType}
                   onPriceChange={onUpdateWorkTypePrice}
+                  onQuantityChange={onUpdateWorkTypeQuantity}
                   onAddCustom={onAddCustomWorkType}
                   onDelete={onDeleteWorkType}
                 />

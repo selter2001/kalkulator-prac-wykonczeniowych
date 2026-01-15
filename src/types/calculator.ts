@@ -17,6 +17,7 @@ export interface WorkType {
   enabled: boolean;
   unit: WorkTypeUnit;
   isCustom?: boolean;
+  customQuantity?: number;
 }
 
 export interface LinearItem {
