@@ -142,18 +142,18 @@ export const Calculator = () => {
             Wszystkie ceny netto
           </motion.div>
           
-          <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-4">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
             <span className="bg-gradient-to-r from-foreground via-foreground to-muted-foreground bg-clip-text text-transparent">
               Kalkulator
             </span>
             <br />
             <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Wycen
+              prac wykończeniowych
             </span>
           </h1>
           
-          <p className="text-muted-foreground text-lg max-w-md mx-auto">
-            Profesjonalne wyceny prac wykończeniowych w kilka kliknięć
+          <p className="text-muted-foreground text-base md:text-lg max-w-lg mx-auto leading-relaxed">
+            Rób wyceny jak profesjonalista — bez Excela, bez tabelek. Prostota i jakość w jednej aplikacji.
           </p>
         </motion.header>
 
