@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, FileDown, Sparkles, User as UserIcon, Check } from 'lucide-react';
+import { Plus, FileDown, Sparkles, User as UserIcon, Check, Volume2, VolumeX } from 'lucide-react';
 import { useCalculator } from '@/hooks/useCalculator';
 import { useAuth } from '@/hooks/useAuth';
+import { useSounds } from '@/contexts/SoundContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { RoomCard } from './RoomCard';
@@ -69,12 +70,36 @@ export const Calculator = () => {
   } = useCalculator();
 
   const { authMode, getDisplayName, profile } = useAuth();
+  const { playSound, isMuted, toggleMute } = useSounds();
 
   const grandTotal = calculateGrandTotal();
   const grossTotal = calculateGrossTotal();
 
   const profileDisplayName = getDisplayName();
   const showConfirmButton = authMode === 'authenticated' && profileDisplayName && !isProfileNameConfirmed;
+
+  const handleCreateRoom = () => {
+    playSound('success');
+    createRoom();
+  };
+
+  const handleDeleteRoom = (roomId: string) => {
+    playSound('remove');
+    deleteRoom(roomId);
+  };
+
+  const handleExportPdf = () => {
+    playSound('celebrate');
+    exportToPdf({
+      rooms,
+      vatRate,
+      calculateRoomTotal,
+      getWorkTypeQuantity,
+      grandTotal,
+      grossTotal,
+      preparedBy,
+    });
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -91,8 +116,21 @@ export const Calculator = () => {
         animate="visible"
         className="relative z-10 container mx-auto px-4 py-12 max-w-4xl"
       >
-        {/* User Menu */}
-        <motion.div variants={itemVariants} className="flex justify-end mb-4">
+        {/* User Menu & Sound Toggle */}
+        <motion.div variants={itemVariants} className="flex justify-end items-center gap-2 mb-4">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={toggleMute}
+            className="p-2.5 rounded-xl hover:bg-muted/50 transition-colors"
+            title={isMuted ? 'Włącz dźwięki' : 'Wycisz dźwięki'}
+          >
+            {isMuted ? (
+              <VolumeX className="h-5 w-5 text-muted-foreground" />
+            ) : (
+              <Volume2 className="h-5 w-5 text-primary" />
+            )}
+          </motion.button>
           <UserMenu />
         </motion.div>
 
@@ -184,7 +222,7 @@ export const Calculator = () => {
             whileTap={{ scale: 0.98 }}
           >
             <Button
-              onClick={() => createRoom()}
+              onClick={handleCreateRoom}
               size="lg"
               className="gap-3 h-14 px-8 text-base font-medium rounded-2xl bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 shadow-lg shadow-primary/25 transition-all duration-300"
             >
@@ -215,7 +253,7 @@ export const Calculator = () => {
                   room={room}
                   roomTotal={calculateRoomTotal(room)}
                   onUpdateName={(name) => updateRoomName(room.id, name)}
-                  onDelete={() => deleteRoom(room.id)}
+                  onDelete={() => handleDeleteRoom(room.id)}
                   onAddWall={(area) => addWall(room.id, area)}
                   onDeleteWall={(wallId) => deleteWall(room.id, wallId)}
                   onAddCeiling={(area) => addCeiling(room.id, area)}
@@ -342,15 +380,7 @@ export const Calculator = () => {
                 whileTap={{ scale: 0.99 }}
               >
                 <Button
-                  onClick={() => exportToPdf({
-                    rooms,
-                    vatRate,
-                    calculateRoomTotal,
-                    getWorkTypeQuantity,
-                    grandTotal,
-                    grossTotal,
-                    preparedBy,
-                  })}
+                  onClick={handleExportPdf}
                   size="lg"
                   variant="outline"
                   className="w-full h-14 gap-3 rounded-2xl text-base font-medium border-2 hover:bg-muted/50 transition-all duration-300"

@@ -22,6 +22,7 @@ import { AreaItemList } from './AreaItemList';
 import { WorkTypesList } from './WorkTypesList';
 import { LinearInput } from './LinearInput';
 import { LinearItemList } from './LinearItemList';
+import { useSounds } from '@/contexts/SoundContext';
 
 interface RoomCardProps {
   room: Room;
@@ -106,16 +107,35 @@ export const RoomCard = ({
   const [isExpanded, setIsExpanded] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(room.name);
+  const { playSound } = useSounds();
 
   const handleSaveName = () => {
     onUpdateName(editName);
     setIsEditing(false);
+    playSound('pop');
   };
 
   const handleCancelEdit = () => {
     setEditName(room.name);
     setIsEditing(false);
   };
+
+  // Wrapped handlers with sounds
+  const handleAddWall = (area: number) => { playSound('pop'); onAddWall(area); };
+  const handleDeleteWall = (id: string) => { playSound('remove'); onDeleteWall(id); };
+  const handleAddCeiling = (area: number) => { playSound('pop'); onAddCeiling(area); };
+  const handleDeleteCeiling = (id: string) => { playSound('remove'); onDeleteCeiling(id); };
+  const handleAddCorner = (length: number) => { playSound('pop'); onAddCorner(length); };
+  const handleDeleteCorner = (id: string) => { playSound('remove'); onDeleteCorner(id); };
+  const handleAddGroove = (length: number) => { playSound('pop'); onAddGroove(length); };
+  const handleDeleteGroove = (id: string) => { playSound('remove'); onDeleteGroove(id); };
+  const handleAddAcrylic = (length: number) => { playSound('pop'); onAddAcrylic(length); };
+  const handleDeleteAcrylic = (id: string) => { playSound('remove'); onDeleteAcrylic(id); };
+  const handleToggleWorkType = (id: string) => { playSound('toggle'); onToggleWorkType(id); };
+  const handleAddCustomWorkType = (name: string, unit: WorkTypeUnit, price: number) => { playSound('success'); onAddCustomWorkType(name, unit, price); };
+  const handleAddCustomWorkItem = (workTypeId: string, value: number) => { playSound('pop'); onAddCustomWorkItem(workTypeId, value); };
+  const handleDeleteCustomWorkItem = (workTypeId: string, itemId: string) => { playSound('remove'); onDeleteCustomWorkItem(workTypeId, itemId); };
+  const handleDeleteWorkType = (id: string) => { playSound('remove'); onDeleteWorkType(id); };
 
   return (
     <div className="rounded-3xl glass-card border border-border/50 overflow-hidden">
@@ -209,10 +229,10 @@ export const RoomCard = ({
                 value={room.totalWallArea.toFixed(2)}
                 unit="m²"
               >
-                <AreaInput onAdd={onAddWall} label="Dodaj ścianę" />
+                <AreaInput onAdd={handleAddWall} label="Dodaj ścianę" />
                 <AreaItemList
                   items={room.walls}
-                  onDelete={onDeleteWall}
+                  onDelete={handleDeleteWall}
                   label="Ściana"
                   emptyMessage="Dodaj pierwszą ścianę"
                 />
@@ -225,10 +245,10 @@ export const RoomCard = ({
                 value={room.totalCeilingArea.toFixed(2)}
                 unit="m²"
               >
-                <AreaInput onAdd={onAddCeiling} label="Dodaj sufit" />
+                <AreaInput onAdd={handleAddCeiling} label="Dodaj sufit" />
                 <AreaItemList
                   items={room.ceilings}
-                  onDelete={onDeleteCeiling}
+                  onDelete={handleDeleteCeiling}
                   label="Sufit"
                   emptyMessage="Brak sufitów"
                 />
@@ -241,10 +261,10 @@ export const RoomCard = ({
                 value={room.totalCorners.toFixed(2)}
                 unit="mb"
               >
-                <LinearInput onAdd={onAddCorner} label="Dodaj" placeholder="Długość" />
+                <LinearInput onAdd={handleAddCorner} label="Dodaj" placeholder="Długość" />
                 <LinearItemList
                   items={room.corners}
-                  onDelete={onDeleteCorner}
+                  onDelete={handleDeleteCorner}
                   label="Narożnik"
                   emptyMessage="Brak narożników"
                 />
@@ -257,10 +277,10 @@ export const RoomCard = ({
                 value={room.totalGrooves.toFixed(2)}
                 unit="mb"
               >
-                <LinearInput onAdd={onAddGroove} label="Dodaj" placeholder="Długość" />
+                <LinearInput onAdd={handleAddGroove} label="Dodaj" placeholder="Długość" />
                 <LinearItemList
                   items={room.grooves}
-                  onDelete={onDeleteGroove}
+                  onDelete={handleDeleteGroove}
                   label="Bruzda"
                   emptyMessage="Brak bruzd"
                 />
@@ -273,10 +293,10 @@ export const RoomCard = ({
                 value={room.totalAcrylic.toFixed(2)}
                 unit="mb"
               >
-                <LinearInput onAdd={onAddAcrylic} label="Dodaj" placeholder="Długość" />
+                <LinearInput onAdd={handleAddAcrylic} label="Dodaj" placeholder="Długość" />
                 <LinearItemList
                   items={room.acrylic}
-                  onDelete={onDeleteAcrylic}
+                  onDelete={handleDeleteAcrylic}
                   label="Akryl"
                   emptyMessage="Brak akrylowania"
                 />
@@ -322,12 +342,12 @@ export const RoomCard = ({
                         <>
                           <AreaInput 
                             compact
-                            onAdd={(value) => onAddCustomWorkItem(workType.id, value)} 
+                            onAdd={(value) => handleAddCustomWorkItem(workType.id, value)} 
                             label="Dodaj" 
                           />
                           <AreaItemList
                             items={(workType.customItems || []).map(item => ({ id: item.id, area: item.value }))}
-                            onDelete={(itemId) => onDeleteCustomWorkItem(workType.id, itemId)}
+                            onDelete={(itemId) => handleDeleteCustomWorkItem(workType.id, itemId)}
                             label={workType.name}
                             emptyMessage={`Dodaj pierwszy element`}
                           />
@@ -335,13 +355,13 @@ export const RoomCard = ({
                       ) : (
                         <>
                           <LinearInput 
-                            onAdd={(value) => onAddCustomWorkItem(workType.id, value)} 
+                            onAdd={(value) => handleAddCustomWorkItem(workType.id, value)} 
                             label="Dodaj" 
                             placeholder={workType.unit === 'szt' ? "Ilość" : "Długość"}
                           />
                           <LinearItemList
                             items={(workType.customItems || []).map(item => ({ id: item.id, length: item.value }))}
-                            onDelete={(itemId) => onDeleteCustomWorkItem(workType.id, itemId)}
+                            onDelete={(itemId) => handleDeleteCustomWorkItem(workType.id, itemId)}
                             label={workType.name}
                             emptyMessage={`Dodaj pierwszy element`}
                           />
@@ -361,10 +381,10 @@ export const RoomCard = ({
                 <WorkTypesList
                   workTypes={room.workTypes}
                   getQuantity={getWorkTypeQuantity}
-                  onToggle={onToggleWorkType}
+                  onToggle={handleToggleWorkType}
                   onPriceChange={onUpdateWorkTypePrice}
-                  onAddCustom={onAddCustomWorkType}
-                  onDelete={onDeleteWorkType}
+                  onAddCustom={handleAddCustomWorkType}
+                  onDelete={handleDeleteWorkType}
                 />
               </Section>
             </div>
