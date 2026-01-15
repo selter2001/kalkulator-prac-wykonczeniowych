@@ -18,6 +18,25 @@ export const useSounds = () => {
   return context;
 };
 
+// Vibration patterns for different actions (in milliseconds)
+const vibrationPatterns: Record<SoundType, number | number[]> = {
+  pop: 15,           // Short tap
+  toggle: 10,        // Very short tap
+  remove: [10, 30, 10], // Double tap
+  success: [15, 50, 25], // Rising pattern
+  celebrate: [20, 40, 20, 40, 50, 40, 80], // Celebration pattern!
+};
+
+const vibrate = (type: SoundType) => {
+  try {
+    if ('vibrate' in navigator) {
+      navigator.vibrate(vibrationPatterns[type]);
+    }
+  } catch (e) {
+    // Silently fail if vibration not supported
+  }
+};
+
 export const SoundProvider = ({ children }: { children: ReactNode }) => {
   const [isMuted, setIsMuted] = useState(() => {
     return localStorage.getItem('calculator-sounds-muted') === 'true';
@@ -40,6 +59,9 @@ export const SoundProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const playSound = useCallback((type: SoundType) => {
+    // Always vibrate on mobile (even if sound is muted)
+    vibrate(type);
+    
     if (isMuted) return;
     
     try {
