@@ -321,6 +321,7 @@ export const RoomCard = ({
                       {workType.unit === 'm2' ? (
                         <>
                           <AreaInput 
+                            compact
                             onAdd={(value) => onAddCustomWorkItem(workType.id, value)} 
                             label="Dodaj" 
                           />

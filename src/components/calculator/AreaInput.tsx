@@ -8,9 +8,10 @@ interface AreaInputProps {
   onAdd: (area: number) => void;
   label: string;
   icon?: ReactNode;
+  compact?: boolean;
 }
 
-export const AreaInput = ({ onAdd, label, icon }: AreaInputProps) => {
+export const AreaInput = ({ onAdd, label, icon, compact = false }: AreaInputProps) => {
   const [area, setArea] = useState('');
 
   const handleAdd = () => {
@@ -25,11 +26,11 @@ export const AreaInput = ({ onAdd, label, icon }: AreaInputProps) => {
     <motion.div
       initial={{ opacity: 0, y: 5 }}
       animate={{ opacity: 1, y: 0 }}
-      className="p-4 rounded-2xl bg-muted/30 border border-border/50"
+      className={`p-4 rounded-2xl bg-muted/30 border border-border/50 ${compact ? 'w-full sm:w-fit' : ''}`}
     >
       <div className="flex flex-wrap items-end gap-3">
         {icon && <div className="hidden sm:block">{icon}</div>}
-        <div className="flex-1 min-w-[150px]">
+        <div className={compact ? "w-full sm:w-[240px]" : "flex-1 min-w-[150px]"}>
           <label className="text-xs text-muted-foreground mb-1.5 block">Powierzchnia (m²)</label>
           <Input
             type="number"
