@@ -364,6 +364,7 @@ export const RoomCard = ({
                             onDelete={(itemId) => handleDeleteCustomWorkItem(workType.id, itemId)}
                             label={workType.name}
                             emptyMessage={`Dodaj pierwszy element`}
+                            unit={workType.unit}
                           />
                         </>
                       )}
