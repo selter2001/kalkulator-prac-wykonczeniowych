@@ -8,11 +8,12 @@ import { useSounds } from '@/contexts/SoundContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { RoomCard } from './RoomCard';
-import { exportToPdf } from '@/utils/pdfExport';
+import { exportToPdf, PdfFormat } from '@/utils/pdfExport';
 import { UserMenu } from '@/components/UserMenu';
 import { AnimatedBackground } from './AnimatedBackground';
 import { SaveQuoteDialog } from './SaveQuoteDialog';
 import { QuotesManager } from './QuotesManager';
+import { PdfFormatDialog } from './PdfFormatDialog';
 import { SavedQuote } from '@/types/quote';
 
 const containerVariants = {
@@ -104,12 +105,33 @@ export const Calculator = () => {
     if (isLoggedIn && rooms.length > 0) {
       setShowSaveDialog(true);
     } else {
-      // Guest mode - just export PDF
-      void handleDownloadOnly(`Wycena ${new Date().toLocaleDateString('pl-PL')}`);
+      // Guest mode - show format dialog then export
+      setShowFormatDialog(true);
     }
   };
 
-  const handleSaveToCloud = async (name: string) => {
+  const [showFormatDialog, setShowFormatDialog] = useState(false);
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+
+  const handleGuestDownload = async (format: PdfFormat) => {
+    setIsGeneratingPdf(true);
+    playSound('celebrate');
+    await exportToPdf({
+      rooms,
+      vatRate,
+      calculateRoomTotal,
+      getWorkTypeQuantity,
+      grandTotal,
+      grossTotal,
+      preparedBy,
+      quoteName: `Wycena ${new Date().toLocaleDateString('pl-PL')}`,
+      format,
+    });
+    setIsGeneratingPdf(false);
+    setShowFormatDialog(false);
+  };
+
+  const handleSaveToCloud = async (name: string, format: PdfFormat) => {
     playSound('celebrate');
 
     if (currentQuoteId) {
@@ -126,6 +148,7 @@ export const Calculator = () => {
           grossTotal,
           preparedBy,
           quoteName: name,
+          format,
         });
         setShowSaveDialog(false);
       }
@@ -144,13 +167,14 @@ export const Calculator = () => {
           grossTotal,
           preparedBy,
           quoteName: name,
+          format,
         });
         setShowSaveDialog(false);
       }
     }
   };
 
-  const handleDownloadOnly = async (name: string) => {
+  const handleDownloadOnly = async (name: string, format: PdfFormat) => {
     playSound('celebrate');
     await exportToPdf({
       rooms,
@@ -161,6 +185,7 @@ export const Calculator = () => {
       grossTotal,
       preparedBy,
       quoteName: name,
+      format,
     });
   };
 
@@ -490,6 +515,14 @@ export const Calculator = () => {
         onDownloadOnly={handleDownloadOnly}
         isLoading={isSavingQuote}
         defaultName={currentQuoteName || undefined}
+      />
+
+      {/* Guest PDF Format Dialog */}
+      <PdfFormatDialog
+        isOpen={showFormatDialog}
+        onClose={() => setShowFormatDialog(false)}
+        onSelect={handleGuestDownload}
+        isLoading={isGeneratingPdf}
       />
     </div>
   );
