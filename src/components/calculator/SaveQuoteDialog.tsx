@@ -10,13 +10,14 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Cloud, Download, Loader2, FileText } from 'lucide-react';
+import { Cloud, Download, Loader2, FileText, Table } from 'lucide-react';
+import { PdfFormat } from '@/utils/pdfExport';
 
 interface SaveQuoteDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onSaveToCloud: (name: string) => Promise<void>;
-  onDownloadOnly: (name: string) => void;
+  onSaveToCloud: (name: string, format: PdfFormat) => Promise<void>;
+  onDownloadOnly: (name: string, format: PdfFormat) => void;
   isLoading: boolean;
   defaultName?: string;
 }
@@ -31,18 +32,19 @@ export const SaveQuoteDialog = ({
 }: SaveQuoteDialogProps) => {
   const [quoteName, setQuoteName] = useState(defaultName || `Wycena ${new Date().toLocaleDateString('pl-PL')}`);
   const [selectedAction, setSelectedAction] = useState<'cloud' | 'download' | null>(null);
+  const [pdfFormat, setPdfFormat] = useState<PdfFormat>('standard');
 
   const handleSaveToCloud = async () => {
     if (!quoteName.trim()) return;
     setSelectedAction('cloud');
-    await onSaveToCloud(quoteName.trim());
+    await onSaveToCloud(quoteName.trim(), pdfFormat);
     setSelectedAction(null);
   };
 
   const handleDownloadOnly = () => {
     if (!quoteName.trim()) return;
     setSelectedAction('download');
-    onDownloadOnly(quoteName.trim());
+    onDownloadOnly(quoteName.trim(), pdfFormat);
     setSelectedAction(null);
     onClose();
   };
@@ -52,6 +54,11 @@ export const SaveQuoteDialog = ({
       onClose();
     }
   };
+
+  const formatOptions: { value: PdfFormat; label: string; icon: React.ReactNode }[] = [
+    { value: 'standard', label: 'Standardowy', icon: <FileText className="h-4 w-4" /> },
+    { value: 'table', label: 'Tabelkowy', icon: <Table className="h-4 w-4" /> },
+  ];
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -80,6 +87,35 @@ export const SaveQuoteDialog = ({
               disabled={isLoading}
               maxLength={100}
             />
+          </div>
+
+          {/* PDF Format Selection */}
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">Format PDF</Label>
+            <div className="flex gap-2">
+              {formatOptions.map((option) => (
+                <motion.button
+                  key={option.value}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setPdfFormat(option.value)}
+                  disabled={isLoading}
+                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 transition-all duration-200 ${
+                    pdfFormat === option.value
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-border/50 hover:border-border text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {option.icon}
+                  <span className="text-sm font-medium">{option.label}</span>
+                </motion.button>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {pdfFormat === 'standard'
+                ? 'Prosty układ tekstowy, czytelny i elegancki'
+                : 'Układ z tabelami i ramkami, jak arkusz kalkulacyjny'}
+            </p>
           </div>
 
           <div className="grid gap-3">
@@ -130,3 +166,4 @@ export const SaveQuoteDialog = ({
     </Dialog>
   );
 };
+
