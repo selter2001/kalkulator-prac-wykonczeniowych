@@ -98,17 +98,21 @@ export const QuotesManager = ({
     };
   };
 
-  const handlePreviewQuote = (quote: SavedQuote) => {
+  const handlePreviewQuote = async (quote: SavedQuote) => {
     const pdfData = getQuotePdfData(quote);
-    const blobUrl = generatePdfBlobUrl(pdfData);
-    setPreviewPdfUrl(blobUrl);
+
+    // Open dialog immediately and show loader while PDF is generating
+    setPreviewPdfUrl(null);
     setPreviewQuote(quote);
     setPreviewDialogOpen(true);
+
+    const blobUrl = await generatePdfBlobUrl(pdfData);
+    setPreviewPdfUrl(blobUrl);
   };
 
-  const handleDownloadQuote = (quote: SavedQuote) => {
+  const handleDownloadQuote = async (quote: SavedQuote) => {
     const pdfData = getQuotePdfData(quote);
-    exportToPdf(pdfData);
+    await exportToPdf(pdfData);
   };
 
   const handleClosePreview = () => {
@@ -239,7 +243,9 @@ export const QuotesManager = ({
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => handlePreviewQuote(quote)}
+                          onClick={() => {
+                            void handlePreviewQuote(quote);
+                          }}
                           className="flex-1"
                         >
                           <Eye className="h-4 w-4 mr-1" />
@@ -248,7 +254,9 @@ export const QuotesManager = ({
                         <Button
                           size="sm"
                           variant="ghost"
-                          onClick={() => handleDownloadQuote(quote)}
+                          onClick={() => {
+                            void handleDownloadQuote(quote);
+                          }}
                           className="text-muted-foreground hover:text-foreground"
                         >
                           <Download className="h-4 w-4" />
@@ -304,7 +312,9 @@ export const QuotesManager = ({
         onClose={handleClosePreview}
         pdfUrl={previewPdfUrl}
         quoteName={previewQuote?.name || ''}
-        onDownload={() => previewQuote && handleDownloadQuote(previewQuote)}
+        onDownload={() => {
+          if (previewQuote) void handleDownloadQuote(previewQuote);
+        }}
       />
     </>
   );

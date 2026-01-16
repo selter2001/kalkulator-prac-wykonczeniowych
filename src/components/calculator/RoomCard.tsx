@@ -354,10 +354,11 @@ export const RoomCard = ({
                         </>
                       ) : (
                         <>
-                          <LinearInput 
-                            onAdd={(value) => handleAddCustomWorkItem(workType.id, value)} 
-                            label="Dodaj" 
-                            placeholder={workType.unit === 'szt' ? "Ilość" : "Długość"}
+                          <LinearInput
+                            onAdd={(value) => handleAddCustomWorkItem(workType.id, value)}
+                            label="Dodaj"
+                            placeholder={workType.unit === 'szt' ? 'Ilość' : 'Długość'}
+                            unit={workType.unit}
                           />
                           <LinearItemList
                             items={(workType.customItems || []).map(item => ({ id: item.id, length: item.value }))}
