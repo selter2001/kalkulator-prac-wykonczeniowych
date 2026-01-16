@@ -1,15 +1,18 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
-import { LinearItem } from '@/types/calculator';
+import { LinearItem, WorkTypeUnit } from '@/types/calculator';
 
 interface LinearItemListProps {
   items: LinearItem[];
   onDelete: (id: string) => void;
   label: string;
   emptyMessage: string;
+  unit?: WorkTypeUnit;
 }
 
-export const LinearItemList = ({ items, onDelete, label, emptyMessage }: LinearItemListProps) => {
+export const LinearItemList = ({ items, onDelete, label, emptyMessage, unit = 'mb' }: LinearItemListProps) => {
+  const unitLabel = unit === 'm2' ? 'm²' : unit === 'mb' ? 'mb' : 'szt.';
+  
   if (items.length === 0) {
     return (
       <p className="text-sm text-muted-foreground text-center py-3">
@@ -32,7 +35,7 @@ export const LinearItemList = ({ items, onDelete, label, emptyMessage }: LinearI
             className="group flex items-center gap-2 px-4 py-2.5 rounded-xl bg-card border border-border/50 shadow-sm"
           >
             <span className="text-xs text-muted-foreground">#{index + 1}</span>
-            <span className="font-semibold">{item.length.toFixed(2)} mb</span>
+            <span className="font-semibold">{item.length.toFixed(2)} {unitLabel}</span>
             <motion.button
               whileHover={{ scale: 1.2 }}
               whileTap={{ scale: 0.9 }}

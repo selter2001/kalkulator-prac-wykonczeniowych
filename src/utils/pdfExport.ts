@@ -12,6 +12,16 @@ interface ExportData {
   quoteName?: string;
 }
 
+// Helper function to replace Polish characters with ASCII equivalents for PDF
+const sanitizePolishChars = (text: string): string => {
+  const polishCharsMap: { [key: string]: string } = {
+    'ą': 'a', 'ć': 'c', 'ę': 'e', 'ł': 'l', 'ń': 'n', 'ó': 'o', 'ś': 's', 'ź': 'z', 'ż': 'z',
+    'Ą': 'A', 'Ć': 'C', 'Ę': 'E', 'Ł': 'L', 'Ń': 'N', 'Ó': 'O', 'Ś': 'S', 'Ź': 'Z', 'Ż': 'Z'
+  };
+  
+  return text.replace(/[ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]/g, char => polishCharsMap[char] || char);
+};
+
 const generatePdfDocument = ({
   rooms,
   vatRate,
@@ -44,7 +54,7 @@ const generatePdfDocument = ({
     doc.setFontSize(12);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(60, 60, 60);
-    doc.text(quoteName, pageWidth / 2, y, { align: 'center' });
+    doc.text(sanitizePolishChars(quoteName), pageWidth / 2, y, { align: 'center' });
   }
   
   y += 10;
@@ -55,7 +65,7 @@ const generatePdfDocument = ({
   
   if (preparedBy) {
     y += 6;
-    doc.text(preparedBy, pageWidth / 2, y, { align: 'center' });
+    doc.text(sanitizePolishChars(preparedBy), pageWidth / 2, y, { align: 'center' });
   }
   
   y += 8;
@@ -71,7 +81,7 @@ const generatePdfDocument = ({
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(50, 50, 50);
-    doc.text(`${roomIndex + 1}. ${room.name}`, 15, y);
+    doc.text(`${roomIndex + 1}. ${sanitizePolishChars(room.name)}`, 15, y);
     y += 7;
     
     doc.setFontSize(10);
@@ -124,7 +134,7 @@ const generatePdfDocument = ({
       const unitLabel = wt.unit === 'm2' ? 'm2' : wt.unit === 'mb' ? 'mb' : 'szt.';
       const priceLabel = wt.unit === 'm2' ? 'zl/m2' : wt.unit === 'mb' ? 'zl/mb' : 'zl/szt.';
 
-      doc.text(wt.name, 20, y);
+      doc.text(sanitizePolishChars(wt.name), 20, y);
       doc.text(`${quantity.toFixed(2)} ${unitLabel}`, 105, y);
       doc.text(`${wt.pricePerMeter.toFixed(2)} ${priceLabel}`, 135, y);
       doc.text(`${total.toFixed(2)} zl`, 165, y);
