@@ -105,19 +105,19 @@ export const Calculator = () => {
       setShowSaveDialog(true);
     } else {
       // Guest mode - just export PDF
-      handleDownloadOnly(`Wycena ${new Date().toLocaleDateString('pl-PL')}`);
+      void handleDownloadOnly(`Wycena ${new Date().toLocaleDateString('pl-PL')}`);
     }
   };
 
   const handleSaveToCloud = async (name: string) => {
     playSound('celebrate');
-    
+
     if (currentQuoteId) {
       // Update existing quote
       const success = await updateQuote(currentQuoteId, name, rooms, vatRate, preparedBy);
       if (success) {
         // Also download PDF
-        exportToPdf({
+        await exportToPdf({
           rooms,
           vatRate,
           calculateRoomTotal,
@@ -135,7 +135,7 @@ export const Calculator = () => {
       if (savedQuote) {
         loadQuoteData(savedQuote.id, savedQuote.name, rooms, vatRate, preparedBy);
         // Also download PDF
-        exportToPdf({
+        await exportToPdf({
           rooms,
           vatRate,
           calculateRoomTotal,
@@ -150,9 +150,9 @@ export const Calculator = () => {
     }
   };
 
-  const handleDownloadOnly = (name: string) => {
+  const handleDownloadOnly = async (name: string) => {
     playSound('celebrate');
-    exportToPdf({
+    await exportToPdf({
       rooms,
       vatRate,
       calculateRoomTotal,
