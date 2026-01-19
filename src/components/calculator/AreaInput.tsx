@@ -28,10 +28,9 @@ export const AreaInput = ({ onAdd, label, icon, compact = false }: AreaInputProp
       animate={{ opacity: 1, y: 0 }}
       className={`p-4 rounded-2xl bg-muted/30 border border-border/50 ${compact ? 'w-full sm:w-fit' : ''}`}
     >
-      <div className="flex flex-wrap items-end gap-3">
+      <div className="flex items-center gap-3">
         {icon && <div className="hidden sm:block">{icon}</div>}
-        <div className={compact ? "w-full sm:w-[240px]" : "flex-1 min-w-[150px]"}>
-          <label className="text-xs text-muted-foreground mb-1.5 block">Powierzchnia (m²)</label>
+        <div className={compact ? "w-[120px]" : "flex-1 min-w-[120px] max-w-[180px]"}>
           <Input
             type="number"
             step="0.01"
@@ -42,6 +41,7 @@ export const AreaInput = ({ onAdd, label, icon, compact = false }: AreaInputProp
             className="h-11 rounded-xl"
           />
         </div>
+        <span className="text-sm text-muted-foreground">m²</span>
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
           <Button
             onClick={handleAdd}
