@@ -49,7 +49,7 @@ export const AreaInput = ({ onAdd, label, icon, compact = false }: AreaInputProp
             className="h-11 px-5 rounded-xl gap-2"
           >
             <Plus className="h-4 w-4" />
-            <span className="hidden sm:inline">{label}</span>
+            {label}
           </Button>
         </motion.div>
       </div>
