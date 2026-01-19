@@ -79,8 +79,38 @@ export const QuotesManager = ({
   };
 
   const getQuotePdfData = (quote: SavedQuote) => {
+    // Create local calculation functions that work with quote.data directly
+    // This avoids closure issues with the Calculator's current state
+    const localGetWorkTypeQuantity = (room: any, workType: any): number => {
+      if (workType.isCustom) {
+        return (workType.customItems || []).reduce((sum: number, item: any) => sum + item.value, 0);
+      }
+      
+      if (workType.unit === 'm2') {
+        if (workType.name.includes('Oklejanie')) {
+          return room.floorProtection || 0;
+        }
+        return room.netArea || 0;
+      } else {
+        // mb - metry bieżące
+        if (workType.name.includes('Narożniki') || workType.name.includes('Narozniki')) return room.totalCorners || 0;
+        if (workType.name.includes('bruzd')) return room.totalGrooves || 0;
+        if (workType.name.includes('Akrylowanie')) return room.totalAcrylic || 0;
+        return 0;
+      }
+    };
+
+    const localCalculateRoomTotal = (room: any): number => {
+      return (room.workTypes || [])
+        .filter((wt: any) => wt.enabled)
+        .reduce((sum: number, wt: any) => {
+          const quantity = localGetWorkTypeQuantity(room, wt);
+          return sum + (quantity * (wt.pricePerMeter || 0));
+        }, 0);
+    };
+
     const grandTotal = quote.data.reduce((sum, room) => {
-      return sum + calculateRoomTotal(room);
+      return sum + localCalculateRoomTotal(room);
     }, 0);
     
     const vatAmount = grandTotal * (quote.vat_rate / 100);
@@ -89,8 +119,8 @@ export const QuotesManager = ({
     return {
       rooms: quote.data,
       vatRate: quote.vat_rate as 8 | 23,
-      getWorkTypeQuantity,
-      calculateRoomTotal,
+      getWorkTypeQuantity: localGetWorkTypeQuantity,
+      calculateRoomTotal: localCalculateRoomTotal,
       grandTotal,
       grossTotal,
       preparedBy: quote.prepared_by || '',
