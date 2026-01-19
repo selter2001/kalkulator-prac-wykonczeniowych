@@ -309,18 +309,31 @@ export const RoomCard = ({
                 value={room.floorProtection.toFixed(2)}
                 unit="m²"
               >
-                <div className="flex items-center gap-3">
-                  <Input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={room.floorProtection || ''}
-                    onChange={(e) => onSetFloorProtection(parseFloat(e.target.value) || 0)}
-                    placeholder="Powierzchnia"
-                    className="max-w-[200px] h-11 rounded-xl"
-                  />
-                  <span className="text-sm text-muted-foreground">m²</span>
-                </div>
+                <AreaInput 
+                  onAdd={(value) => {
+                    playSound('pop');
+                    onSetFloorProtection(room.floorProtection + value);
+                  }} 
+                  label="Dodaj"
+                  compact
+                />
+                {room.floorProtection > 0 && (
+                  <div className="mt-3 flex items-center gap-2">
+                    <span className="text-sm text-muted-foreground">Aktualna wartość:</span>
+                    <span className="font-semibold">{room.floorProtection.toFixed(2)} m²</span>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => {
+                        playSound('remove');
+                        onSetFloorProtection(0);
+                      }}
+                      className="h-7 px-2 text-destructive hover:text-destructive hover:bg-destructive/10"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
               </Section>
 
               {/* Custom Work Items Sections - display after Floor Protection */}
