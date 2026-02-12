@@ -1,4 +1,4 @@
-# Kalkulator Prac Wykończeniowych
+# renovation-cost-app
 
 ![React](https://img.shields.io/badge/React-18-61DAFB?style=flat&logo=react&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white)
@@ -41,8 +41,8 @@ A professional web-based calculator for interior finishing and renovation works 
 ### Installation
 
 ```bash
-git clone https://github.com/selter2001/kalkulator-prac-wykonczeniowych.git
-cd kalkulator-prac-wykonczeniowych
+git clone https://github.com/selter2001/renovation-cost-app.git
+cd renovation-cost-app
 npm install
 ```
 
@@ -88,7 +88,7 @@ This project is licensed under the MIT License.
 
 ---
 
-# Kalkulator Prac Wykończeniowych
+# renovation-cost-app
 
 ![React](https://img.shields.io/badge/React-18-61DAFB?style=flat&logo=react&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white)
@@ -131,8 +131,8 @@ Profesjonalny kalkulator webowy do wyceny prac wykończeniowych i remontowych w 
 ### Instalacja
 
 ```bash
-git clone https://github.com/selter2001/kalkulator-prac-wykonczeniowych.git
-cd kalkulator-prac-wykonczeniowych
+git clone https://github.com/selter2001/renovation-cost-app.git
+cd renovation-cost-app
 npm install
 ```
 
